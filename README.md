@@ -1,2 +1,2 @@
 # myBlog
-使用node,react搭建个人博客
+使用koa,react搭建个人博客
