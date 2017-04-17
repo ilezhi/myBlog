@@ -1,9 +1,8 @@
+const path = require('path');
+// var argv = require('yargs').argv;
 console.log('读取webpack配置文件');
 process.env.NODE_ENV = (process.env.NODE_ENV || 'development').trim();
 console.log(process.env.NODE_ENV);
-
-import path from 'path';
-// var argv = require('yargs').argv;
 
 var config = {};
 
@@ -75,4 +74,5 @@ config.utils_aliases = [
     'styles',
 ].reduce((acc, x) => ((acc[x] = paths.src(x)) && acc), {});
 
-export default config;
+console.log('config');
+module.exports = config;

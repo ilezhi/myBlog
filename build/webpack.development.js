@@ -1,26 +1,29 @@
-import webpack from 'webpack';
-import merge from 'webpack-merge';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-
-import baseWebpackConfig from './_base';
-
+console.log('进入development');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const baseWebpackConfig = require('./_base');
 
 var devConfig = merge(baseWebpackConfig, {
     module: {
-        rule: [
+        rules: [
             {
                 test: /\.(css|scss)$/,
-                use: ['css-loader', 'sass-loader']
+                use: ExtractTextPlugin.extract({
+                    use: ['css-loader', 'sass-loader']
+                })
             }
         ]
     },
     plugins: [
         new HtmlWebpackPlugin({
-            filename: 'index.html',
+            filename: '../views/index.html',
             template: 'index.html',
             inject: true
-        })
+        }),
+        new ExtractTextPlugin('styles/site.css')
     ]
 });
 
-export default devConfig;
+module.exports = devConfig;

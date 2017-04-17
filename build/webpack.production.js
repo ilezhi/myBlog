@@ -1,9 +1,10 @@
-import webpack from 'webpack';
-import merge from 'webpack-merge';
-import HtmlWebpackPlugin from 'html-webpack-plugin';
-import ExtractTextPlugin from 'extract-text-webpack-plugin';
+console.log('进入production');
+const webpack = require('webpack');
+const merge = require('webpack-merge');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-import baseWebpackConfig from './_base';
+const baseWebpackConfig =  require('./_base');
 
 
 var prodConfig = merge(baseWebpackConfig, {
@@ -46,4 +47,4 @@ var prodConfig = merge(baseWebpackConfig, {
 });
 
 
-export default prodConfig;
+module.exports = prodConfig;
