@@ -16,6 +16,12 @@ var devConfig = merge(baseWebpackConfig, {
             }
         ]
     },
+    devServer: {
+        historyApiFallback: true,
+        hot: true,
+        inline: true,
+        port: '3000'
+    },
     plugins: [
         new HtmlWebpackPlugin({
             filename: '../views/index.html',
