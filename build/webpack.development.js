@@ -24,7 +24,7 @@ var devConfig = merge(baseWebpackConfig, {
     },
     plugins: [
         new HtmlWebpackPlugin({
-            filename: '../views/index.html',
+            filename: 'index.html',
             template: 'index.html',
             inject: true
         }),
