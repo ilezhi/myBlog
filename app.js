@@ -33,8 +33,12 @@ app.use(async (ctx, next) => {
   console.log(`${ctx.method} ${ctx.url} - ${ms}ms`);
 });
 
-router.use('/', index.routes(), index.allowedMethods());
-app.use(router.routes(), router.allowedMethods());
+
+app.use(async (ctx, next) => {
+  await index.routes()(ctx, next);
+});
+// router.use('/', index.routes(), index.allowedMethods());
+// app.use(router.routes(), router.allowedMethods());
 
 
 app.on('error', function(err, ctx){

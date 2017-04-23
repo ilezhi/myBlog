@@ -20,7 +20,16 @@ var devConfig = merge(baseWebpackConfig, {
         historyApiFallback: true,
         hot: true,
         inline: true,
-        port: '3000'
+        port: '8000',
+        proxy: {
+            '/api': {
+                target: 'http://localhost:3000',
+                changeOrigin: true,
+                pathRewrite: {
+                    '^/api': ''
+                }
+            }
+        }
     },
     plugins: [
         new HtmlWebpackPlugin({
