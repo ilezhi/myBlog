@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import { overrideComponentTypeChecker } from 'react-toolbox';
 
 import App from './App';
+import './assets/js/rem';
+import './assets/css/reset.css';
 
 const render = () => {
     ReactDOM.render(
