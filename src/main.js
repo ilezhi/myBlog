@@ -1,14 +1,24 @@
+import './assets/css/reset.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { overrideComponentTypeChecker } from 'react-toolbox';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import DevTools from './components/DevTools';
 
-import App from './App';
-import './assets/js/rem';
-import './assets/css/reset.css';
+import configureStore from './store';
+import App from './app';
+
+const store = configureStore();
 
 const render = () => {
     ReactDOM.render(
-        <App />,
+        <Provider store={store}>
+            <div>
+                <App />
+                <DevTools />
+            </div>
+        </Provider>,
         document.getElementById('app')
     );
 };
@@ -21,7 +31,7 @@ if (process.env.NODE_ENV !== 'production') {
         )
     ));
     if (module.hot) {
-        module.hot.accept('./App', render);
+        module.hot.accept('./app', render);
     }
 }
 
