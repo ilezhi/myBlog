@@ -9,10 +9,16 @@ var devConfig = merge(baseWebpackConfig, {
     module: {
         rules: [
             {
-                test: /\.(css|scss)$/,
-                use: ExtractTextPlugin.extract({
-                    use: ['css-loader', 'sass-loader']
-                })
+                test: /\.css$/,
+                use: ExtractTextPlugin.extract([{
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            sourceMap: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]--[local]--[hash:base64:8]'
+                        }
+                    }, 'postcss-loader'])
             }
         ]
     },
@@ -37,7 +43,10 @@ var devConfig = merge(baseWebpackConfig, {
             template: 'index.html',
             inject: true
         }),
-        new ExtractTextPlugin('styles/site.css')
+        new ExtractTextPlugin('styles/site.css'),
+        new webpack.LoaderOptionsPlugin({
+            debug: true
+        }),
     ]
 });
 

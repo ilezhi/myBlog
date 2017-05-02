@@ -12,9 +12,15 @@ var prodConfig = merge(baseWebpackConfig, {
         rule: [
             {
                 test: /\.(css|scss)$/,
-                use: ExtractTextPlugin.extract({
-                    use: ['css-loader', 'sass-loader']
-                })
+                use: ExtractTextPlugin.extract([{
+                        loader: 'css-loader',
+                        options: {
+                            modules: true,
+                            sourceMap: true,
+                            importLoaders: 1,
+                            localIdentName: '[name]--[local]--[hash:base64:8]'
+                        }
+                    }, 'postcss-loader'])
             }
         ]
     },
