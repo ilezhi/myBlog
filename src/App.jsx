@@ -6,6 +6,7 @@ export default class App extends Component {
         return (
             <div className="title">
                 <h1>This is react!</h1>
+                {this.props.children}
             </div>
         );
     }
