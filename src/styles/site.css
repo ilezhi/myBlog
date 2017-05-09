@@ -1,0 +1,32 @@
+.wrap {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
+/*顶部*/
+.header {
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.center {
+    width: 1280px;
+    margin: 0 auto;
+}
+
+.footer {
+    font-size: 12px;
+}
+
+.copyright {
+    padding: 12px 0;
+    text-align: center;
+    color: #666;
+    border-top: 1px solid #eee;
+}
+
+.main {
+    flex: 1;
+}
+
