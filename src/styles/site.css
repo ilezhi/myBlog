@@ -1,3 +1,7 @@
+body {
+    background: #f4f4f4;
+    font-size: 16px;
+}
 .wrap {
     display: flex;
     min-height: 100vh;
@@ -6,12 +10,13 @@
 
 /*顶部*/
 .header {
-    padding: 12px 0;
-    border-bottom: 1px solid #eee;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    background: #f2f2f2;
 }
 
 .center {
-    width: 1280px;
+    width: 12.8rem;
     margin: 0 auto;
 }
 
@@ -27,6 +32,48 @@
 }
 
 .main {
+    display: flex;
     flex: 1;
 }
 
+.homewrap {
+    height: 100%;
+    display: flex;
+}
+
+.articleList {
+    flex: 1;
+    padding: 0.16rem 0;
+}
+
+.tagswrap {
+    width: 2.5rem;
+    padding: 0.16rem 0 0 0.1rem;
+}
+
+@media screen and (max-width: 760px) {
+    .tagswrap {
+        display: none;
+    }
+}
+
+.bottomLine > div {
+    vertical-align: bottom;
+}
+
+.tagbar {
+    padding: 0.11rem 0 0;
+}
+
+.datetime {
+    padding: 0.05rem 0 0;
+
+    & > p {
+        display: inline-block;
+        margin: 0 0.1rem 0 0;
+    }
+}
+
+.article p {
+    font-size: 18px;
+}

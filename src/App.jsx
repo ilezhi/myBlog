@@ -8,7 +8,7 @@ export default class App extends Component {
             <div className={styles.wrap}>
                 <header className={styles.header}>
                     <div className={styles.center}>
-                        <span>WEELS</span>
+                        <span>Weels's blog</span>
                     </div>
                 </header>
                 <div className={styles.main}>

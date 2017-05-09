@@ -1,4 +1,5 @@
 import './assets/css/reset.css';
+import './assets/js/rem.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { overrideComponentTypeChecker } from 'react-toolbox';
