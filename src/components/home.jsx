@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router';
 import styles from '../styles/site';
 import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
 import {Button} from 'react-toolbox/lib/button';
@@ -26,6 +27,7 @@ export default class Home extends Component {
                             <CardText className={article}>{'今天我们来谈一谈javascript中常用的数组方法'}</CardText>
                             <CardActions>
                                 <Button label='阅读更多'></Button>
+                                <Link to='/article/edit/1' >编辑</Link>
                             </CardActions>
                         </Card>
                     </div>

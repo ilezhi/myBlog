@@ -28,6 +28,10 @@ var baseConfig = {
         extensions: ['.js', '.jsx', '.scss', '.css'],
         alias: config.utils_aliases
     },
+    externals: {
+        'editor': 'Editor',
+        'marked': 'marked'
+    },
     module: {
         rules: [
             {
