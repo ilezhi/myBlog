@@ -7,6 +7,8 @@ const onerror = require('koa-onerror');
 const Bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 
+require('./models');
+
 const index = require('./routes');
 
 const app = new Koa();
