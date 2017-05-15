@@ -10,6 +10,8 @@ const UserSchema = new Schema({
     avatar: { type: String },
     tag: { type: String },
 
+    website: {},
+
     article_count: { type: Number, default: 0 },
     reply_count: { type: Number, default: 0 },
 

@@ -21,7 +21,6 @@ mongoose.connect(config.db, {
             user.save();
         }
     });
-    
 });
 
 // models
