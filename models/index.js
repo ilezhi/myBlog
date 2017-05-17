@@ -30,7 +30,7 @@ require('./reply');
 require('./tag');
 
 
-exports.user    = mongoose.model('User');
-exports.article = mongoose.model('Article');
-exports.reply   = mongoose.model('Reply');
-exports.tag     = mongoose.model('Tag');
+exports.User    = mongoose.model('User');
+exports.Article = mongoose.model('Article');
+exports.Reply   = mongoose.model('Reply');
+exports.Tag     = mongoose.model('Tag');
