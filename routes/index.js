@@ -1,5 +1,6 @@
 var router = require('koa-router')();
 var fs = require('fs');
+var article = require('../controllers/article');
 
 router.get('/', async (ctx, next) => {
   ctx.body = {
@@ -15,5 +16,7 @@ router.post('/', async (ctx, next) => {
     msg: 'success'
   };
 });
+
+router.post('/article/create', article.create);
 
 module.exports = router;

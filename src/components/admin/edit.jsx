@@ -43,11 +43,27 @@ export default class Edit extends Component {
             !source.includes(newTag) && source.push(newTag);
         }
 
-        
         this.setState({countries: tags});
     };
 
     saveArticle = () => {
-        let a = md.codemirror.getValue();
+        // test
+        let cont = md.codemirror.getValue();
+        let param = {
+            title: 'javascript',
+            content: cont
+        };
+        fetch('/api/article/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(param)
+        })
+        .then(res => res.json())
+        .then(resp => {
+            console.log(resp)
+        });
     }
 }
