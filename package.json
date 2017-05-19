@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/myTurn2015/myBlog#readme",
   "dependencies": {
+    "classnames": "^2.2.5",
     "debug": "^2.6.3",
     "editor": "github:lepture/editor",
     "ejs": "^2.5.6",

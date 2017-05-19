@@ -79,3 +79,21 @@ body {
 .article p {
     font-size: 18px;
 }
+
+.wh {
+    width: 30px;
+    height: 30px;
+}
+
+.mask {
+    width: 100%;
+    height: 36px;
+    position: absolute;
+    bottom: 30px;
+    z-index: 99;
+    background: rgba(244,244,244,0.6);
+    display: none;
+    &.active {
+        display: block;
+    }
+}
