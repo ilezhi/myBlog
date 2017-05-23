@@ -42,3 +42,30 @@ const articles = (state = {}, action) => {
 
 export default articles;
 
+/**
+ * article: {
+ *  isFetching: false,
+ *  page: 1,
+ *  pageSize: 10,
+ *  error: ''
+ *  content: [
+ *      {   
+ *          id: '',
+ *          title: '',
+ *          tags: [],
+ *          content: '',
+ *          createdAt: '',
+ *          updatedAt: ''
+ *      }
+ *  ]
+ * 
+ * }
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ * 
+ */
+

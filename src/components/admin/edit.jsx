@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import Input from 'react-toolbox/lib/input';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import { Button } from 'react-toolbox/lib/button';
@@ -7,21 +8,23 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import cs from 'classnames';
 
 import fetchData from '../../assets/js/fetch';
+import { addTag } from '../../actions/tag';
 import styles from '../../styles/site';
+import {
+    ADD_TAG_SUCCESS,
+    ADD_TAG_FAILURE
+} from '../../constants/tagType';
 
 let source = ['javascrpt', 'web', '散文', '算法'];
 let md = null;
-export default class Edit extends Component {
+class Edit extends Component {
     constructor(props) {
         super(props);
         this.state = {
             title: '',
-            source: ['javascrpt', 'web', '散文', '算法'],
             tags: ['web'],
-            msg: '',
-            msgType: '',
+            content: '',
             active: false,
-            loading: false
         };
     }
     componentDidMount() {
@@ -30,9 +33,14 @@ export default class Edit extends Component {
     }
     render() {
         let { title } = this.state;
+        // 添加标签后消息提示
+        let { msg, msgType, active, tagLoading, tagSource } = this.props;
+
         let classname = cs(styles.mask, {
-            [styles.active]: this.state.loading
+            [styles.active]: tagLoading
         });
+
+
         return (
             <div>
                 <Input label='标题' value={this.state.title} onChange={this.changeTitle} />
@@ -42,7 +50,7 @@ export default class Edit extends Component {
                         allowCreate={true}
                         selectedPosition='above'
                         label='添加标签'
-                        source={this.state.source}
+                        source={tagSource}
                         onChange={this.changeTags}
                         value={this.state.tags}
                     />
@@ -57,8 +65,8 @@ export default class Edit extends Component {
                 <Snackbar 
                     action='消息'
                     timeout={2000} 
-                    label={this.state.msg} 
-                    type={this.state.msgType} 
+                    label={msg} 
+                    type={msgType} 
                     active={this.state.active}
                     onTimeout={this.snackbarTimeout}
                 />
@@ -79,39 +87,28 @@ export default class Edit extends Component {
         var tag = tags[0];
 
         // add existing tag
-        if (state.source.includes(tag)) {
+        if (this.props.tagSource.includes(tag)) {
             state.tags = tags;
-        } else {
-            // add new tag
-            try {
-                this.setState({
-                    ...this.state,
-                    loading: true
-                });
-                let res = await fetchData('POST', '/api/tag/create', { tag });
-                this.setState({
-                    ...this.state,
-                    loading: false
-                });
-                if (res.status !== 200) {
-                    throw new Error(res.statusText);
-                }
-
-                let result = await res.json();
-                let { code, msg } = result;
-                state.msgType = code ? 'warning' : 'accept';
-                state.msg = msg;
-                state.active = true;
-                state.source.push(tag);
-                state.tags.push(tag);
-            } catch (err) {
-                state.msg = err.message;
-                state.msgType = 'warning';
-                state.active = true;
-            }
+            this.setState(state);
+            return;
         }
 
-        this.setState(state);
+        // add new tag
+        let { addTag } = this.props;
+        let res = addTag(tag);
+        if (!res) {
+            // 使用缓存数据
+            return;
+        }
+
+        res.then(res => {
+            // 成功添加标签
+            state.active = true;
+            if (res.type === ADD_TAG_SUCCESS) {
+                state.tags.push(tag);
+            }
+            this.setState(state);
+        });
     };
 
     // 标题修改
@@ -132,3 +129,19 @@ export default class Edit extends Component {
         })
     }
 }
+
+const mapStateToProps = state => {
+    let { tags, isFetching, error } = state.tags;
+    let tagSource = tags.map(tag => {
+        return tag.name;
+    });
+
+    return {
+        tagSource,
+        tagLoading: isFetching,
+        msgType: (!isFetching && error === '') ? 'accept' : 'warning',
+        msg: !isFetching ? error === '' ? '添加标签成功' : error : '',
+    };
+}
+
+export default connect(mapStateToProps, { addTag })(Edit);
