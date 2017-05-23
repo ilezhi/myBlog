@@ -74,7 +74,6 @@ class Edit extends Component {
         );
     }
     changeTags = async tags => {
-        console.log(tags);
         var state = { ...this.state };
 
         // delete all tags
@@ -97,13 +96,13 @@ class Edit extends Component {
         let { addTag } = this.props;
         let res = addTag(tag);
         if (!res) {
-            // 使用缓存数据
+            // use cache data
             return;
         }
 
         res.then(res => {
-            // 成功添加标签
             state.active = true;
+            // add tag successfully 
             if (res.type === ADD_TAG_SUCCESS) {
                 state.tags.push(tag);
             }
