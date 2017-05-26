@@ -3,22 +3,51 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-// 新增文章
-exports.create = async function(ctx, next) {
-    var data = ctx.request.body;
-    var newArticle = new Article(data);
+// 新增、编辑保存文章
+/**
+ * {
+ *      id: 1,
+ *      title: '',
+ *      tags: [''],
+ *      content: ''
+ * 
+ * }
+ * 
+ * 
+ */
+exports.save = async function(ctx, next) {
+    var article = ctx.request.body;
+    // 编辑
+    if ('id' in article) {
+        edit(article);
+        return;
+    }
 
+
+    var newArticle = new Article(article);
+    console.log('article', article);
     try {
         var a = await newArticle.save();
     } catch (err) {
         return ctx.body = {
             code: 1,
-            msg: '文章保存失败'
+            msg: 'fail to create article'
         };
     }
 
     return ctx.body = {
         code: 0,
-        msg: 'success'
+        msg: 'success',
+        data: {
+            id: a._id,
+            ...article
+        }
     };
 };
+
+
+const edit = async function(article) {
+    let { id, ...left } = article;
+    var a = await Article.update({_id: id});
+    console.log('update', a);
+}

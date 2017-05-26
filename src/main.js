@@ -7,7 +7,7 @@ import { overrideComponentTypeChecker } from 'react-toolbox';
 import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 
-import { Router, Route, hashHistory, IndexRoute } from 'react-router';
+import { Router, Route, browserHistory, IndexRoute } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 
 import DevTools from './components/DevTools';
@@ -17,7 +17,7 @@ import configureStore from './store';
 import App from './app';
 
 const store = configureStore();
-const history = syncHistoryWithStore(hashHistory, store);
+const history = syncHistoryWithStore(browserHistory, store);
 
 console.log('******routes', routes);
 

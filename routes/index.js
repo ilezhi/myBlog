@@ -18,7 +18,7 @@ router.post('/', async (ctx, next) => {
   };
 });
 
-router.post('/article/create', article.create);
+router.post('/article/save', article.save);
 router.post('/tag/create', tag.create);
 
 module.exports = router;

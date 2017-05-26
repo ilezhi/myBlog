@@ -41,7 +41,13 @@ export default store => next => action => {
 
     next({type: requestType});
     return fetch(endpoint, requestConfig)
-            .then(res => res.json())
+            .then(res => {
+                console.log('res', res);
+                if (res.status !== 200) {
+                    return Promise.reject(res.statusText);
+                }
+                return res.json();
+            })
             .then(res => {
                 let { code, msg, data} = res;
                 if (code) {
@@ -58,7 +64,6 @@ export default store => next => action => {
                 });
             })
             .catch(err => {
-                console.log('err', err);
                 return next({
                     type: failureType,
                     message: err.message || err
