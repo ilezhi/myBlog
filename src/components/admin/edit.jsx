@@ -31,11 +31,10 @@ class Edit extends Component {
         let operation = props.location.pathname.substring(1).split('/')[1];
 
         this.state = {
-            msgType: '',
-            active: false,
             title: '',
             tags: [],
-            content: ''
+            content: '',
+            active: false,
         }
 
         if (operation === 'edit') {
@@ -52,9 +51,9 @@ class Edit extends Component {
         md.render();
     }
     render() {
-        let { title, content, tags, msgType, active } = this.state;
+        let { title, content, tags, active } = this.state;
         // 添加标签后消息提示
-        let { tagLoading, tagSource, saving, msg } = this.props;
+        let { tagLoading, tagSource, saving, msg, msgType } = this.props;
         console.log('saving', saving);
         let classname = cs(styles.mask, {
             [styles.active]: tagLoading
@@ -68,7 +67,7 @@ class Edit extends Component {
             <div>
                 <Input label='标题' value={title} onChange={this.changeTitle} />
                 <div style={{"position":"relative"}}>
-                    <Autocomplete 
+                    <Autocomplete
                         direction='down'
                         allowCreate={true}
                         selectedPosition='above'
@@ -86,11 +85,11 @@ class Edit extends Component {
                 </div>
                 <Button label='保存' raised onClick={this.saveArticle} />
                 <div className={saveArticle}><ProgressBar type='circular' mode='indeterminate' /></div>
-                <Snackbar 
+                <Snackbar
                     action='消息'
-                    timeout={2000} 
-                    label={msg} 
-                    type={msgType} 
+                    timeout={2000}
+                    label={msg}
+                    type={msgType}
                     active={active}
                     onTimeout={this.snackbarTimeout}
                 />
@@ -98,6 +97,7 @@ class Edit extends Component {
         );
     }
     changeTags = async tags => {
+        console.log('change');
         var state = { ...this.state };
         // delete all tags
         if (tags.length === 0) {
@@ -120,25 +120,21 @@ class Edit extends Component {
         // add new tag
         let { addTag } = this.props;
         let res = await addTag(tag);
-        if (!res) {
-            // use cache data
-            return;
-        }
 
         state.active = true;
-        // add tag successfully 
+        // add tag successfully
         if (res.type === ADD_TAG_SUCCESS) {
             state.tags.push(tag);
-            state.msgType = 'accept';
-        } else {
-            state.msgType = 'warning';
+            state.active = true;
         }
+
         this.setState(state);
+
     };
 
     // 标题修改
     changeTitle = title => {
-        var state = { ...this.state };
+        let state = { ...this.state };
         state.title = title;
         this.setState(state);
     }
@@ -171,11 +167,11 @@ class Edit extends Component {
         }
 
         // 保存失败
-        this.setState({...this.state, msgType: 'warning', active: true});
+        this.setState({...this.state, active: true});
     }
 
     snackbarTimeout = () => {
-        this.setState({ 
+        this.setState({
             ...this.state,
             active: false
         });
@@ -184,25 +180,38 @@ class Edit extends Component {
 
 
 const mapStateToProps = state => {
-    let msg = '';
     let { articles, tags } = state;
     let tagSource = tags.tags.map(tag => {
         return tag.name;
     });
 
-    if (!tags.isFetching && tags.error) {
-        msg = tags.error;
+    let msg = '';
+    let msgType = '';
+
+    if (!tags.isFetching) {
+      if (tags.error) {
+        msg = '添加标签失败';
+        msgType = 'warning';
+      } else {
+        msg = '添加标签成功';
+        msgType = 'accept';
+      }
     }
 
     if (!articles.isFetching && articles.error) {
-        msg = articles.error;
+      active = true;
+      msg = '添加文章失败';
+      msgType = 'warning';
     }
+
+    console.log('article', articles);
 
     return {
         msg,
+        msgType,
         tagSource,
-        tagLoading: tags.isFetching,
-        saving: articles.isFetching,
+        tagLoading: tags.isFetching || false,
+        saving: articles.isFetching || false,
         articles: articles.list || []
     };
 }
