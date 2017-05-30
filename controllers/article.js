@@ -3,6 +3,30 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
+
+exports.list = async function(ctx, next) {
+    var query = Article
+                    .find()
+                    .select('id title content tags');
+
+    try {
+        var data = await query.exec();
+    } catch(err) {
+        ctx.body = {
+            code: 1,
+            msg: 'fail to query data'
+        };
+
+        return;
+    }
+
+    ctx.body = {
+        code: 0,
+        data: data,
+        msg: 'success'
+    };
+}
+
 // 新增、编辑保存文章
 /**
  * {
@@ -10,10 +34,10 @@ mongoose.Promise = global.Promise;
  *      title: '',
  *      tags: [''],
  *      content: ''
- * 
+ *
  * }
- * 
- * 
+ *
+ *
  */
 exports.save = async function(ctx, next) {
     var article = ctx.request.body;

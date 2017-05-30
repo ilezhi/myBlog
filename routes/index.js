@@ -19,6 +19,7 @@ router.post('/', async (ctx, next) => {
 });
 
 router.post('/article/save', article.save);
+router.get('/article/list', article.list);
 router.post('/tag/create', tag.create);
 
 module.exports = router;
