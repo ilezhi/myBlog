@@ -15,6 +15,11 @@ const ReplySchema = new Schema({
     update_at: { type: Date, default: Date.now },
 });
 
+ReplySchema.pre('save', next => {
+    this.update_at = new Date();
+    next();
+});
+
 ReplySchema.index({create_at: -1});
 
 mongoose.model('Reply', ReplySchema);

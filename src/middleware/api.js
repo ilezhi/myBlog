@@ -11,13 +11,13 @@ export default store => next => action => {
 
     if (typeof shouldCallApi === 'function') {
         if (!shouldCallApi(store.getState())) {
+            console.log('cache');
             // 使用缓存数据
             return false;
         }
     }
 
     const [requestType, successType, failureType] = types;
-    next({type: requestType});
 
     const { type, data } = params;
     let requestConfig = {
@@ -39,25 +39,33 @@ export default store => next => action => {
         });
     }
 
+    next({type: requestType});
     return fetch(endpoint, requestConfig)
-            .then(res => res.json())
+            .then(res => {
+                console.log('res', res);
+                if (res.status !== 200) {
+                    return Promise.reject(res.statusText);
+                }
+                return res.json();
+            })
             .then(res => {
                 let { code, msg, data} = res;
-                if (code !== 200) {
+                if (code) {
                     return Promise.reject(msg);
                 }
 
                 return data;
             })
             .then(data => {
+                
                 return next({
                     type: successType,
-                    ...data
+                    data
                 });
             })
             .catch(err => {
                 return next({
-                    type: failure,
+                    type: failureType,
                     message: err.message || err
                 });
             });
