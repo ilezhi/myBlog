@@ -10,6 +10,10 @@ import {
     SAVE_ARTICLE_REQUEST,
     SAVE_ARTICLE_SUCCESS,
     SAVE_ARTICLE_FAILURE,
+
+    DEL_ARTICLE_REQUEST,
+    DEL_ARTICLE_SUCCESS,
+    DEL_ARTICLE_FAILURE,
 } from '../constants/articleType';
 
 
@@ -20,6 +24,7 @@ const articles = (state = {}, action) => {
     switch(action.type) {
         case ARTICLE_REQUEST:
         case ARTICLES_REQUEST:
+        case DEL_ARTICLE_REQUEST:
         case SAVE_ARTICLE_REQUEST:
             return { ...state, isFetching: true, error: ''};
 
@@ -75,10 +80,23 @@ const articles = (state = {}, action) => {
             list.unshift(article);
             return { ...state, isFetching: false, list, count: state.count + 1};
 
+        case DEL_ARTICLE_SUCCESS:
+            let delId = action.data;
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id === delId) {
+                    list.splice(i, 1);
+                    break;
+                }
+            }
+
+            return { ...state, isFetching: false, list, count: state.count - 1};
+
         case ARTICLE_FAILURE:
         case ARTICLES_FAILURE:
+        case DEL_ARTICLE_FAILURE:
         case SAVE_ARTICLE_FAILURE:
             return { ...state, isFetching: false, error: action.message };
+            
         default:
             return state;
     }

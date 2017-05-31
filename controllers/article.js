@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
 
-
+// 获取文章列表
 exports.list = async function(ctx, next) {
     let count = 0;
     let articles = [];
@@ -44,17 +44,6 @@ exports.list = async function(ctx, next) {
 }
 
 // 新增、编辑保存文章
-/**
- * {
- *      id: 1,
- *      title: '',
- *      tags: [''],
- *      content: ''
- *
- * }
- *
- *
- */
 exports.save = async function(ctx, next) {
     var article = ctx.request.body;
     // 编辑
@@ -91,3 +80,14 @@ const edit = async function(article) {
     var a = await Article.update({_id: id});
     console.log('update', a);
 }
+
+// 删除文章
+exports.del = async function(ctx, next) {
+    var id = ctx.request.body.id;
+    console.log(id);
+    ctx.body = {
+        code: 0,
+        msg: 'success',
+        data: id
+    };
+};

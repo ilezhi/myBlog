@@ -6,6 +6,10 @@ import {
     SAVE_ARTICLE_REQUEST,
     SAVE_ARTICLE_SUCCESS,
     SAVE_ARTICLE_FAILURE,
+
+    DEL_ARTICLE_REQUEST,
+    DEL_ARTICLE_SUCCESS,
+    DEL_ARTICLE_FAILURE,
 } from '../constants/articleType';
 
 // 获取文章列表
@@ -30,6 +34,18 @@ export const saveArticle = article => {
         params: {
             type: 'POST',
             data: article
+        }
+    };
+};
+
+// 删除文章
+export const delArticleById = id => {
+    return {
+        types: [DEL_ARTICLE_REQUEST, DEL_ARTICLE_SUCCESS, DEL_ARTICLE_FAILURE],
+        endpoint: '/api/article/del',
+        params: {
+            type: 'POST',
+            data: { id }
         }
     };
 };

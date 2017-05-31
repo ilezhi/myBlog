@@ -18,8 +18,11 @@ router.post('/', async (ctx, next) => {
   };
 });
 
-router.post('/article/save', article.save);
 router.get('/article/list', article.list);
+router.post('/article/save', article.save);
+router.post('/article/del', article.del);
+
+
 router.post('/tag/create', tag.create);
 
 module.exports = router;
