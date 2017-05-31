@@ -11,10 +11,13 @@ import {
 // 获取文章列表
 export const fetchArticles = (params) => {
     return {
-        types: [ARTICLES_REQUEST, ARTICLE_SUCCESS, ARTICLE_FAILURE],
+        types: [ARTICLES_REQUEST, ARTICLES_SUCCESS, ARTICLES_FAILURE],
         shouldCallApi: true,
-        endpoint: '/api/',
-        params,
+        endpoint: '/api/article/list',
+        params: {
+            type: 'GET',
+            data: params
+        }
     };
 };
 

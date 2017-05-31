@@ -15,7 +15,7 @@ import {
 
 // 获取文章列表
 const articles = (state = {}, action) => {
-    let list = { ...state.list };
+    let {list = [], pagination = [] } = state;
 
     switch(action.type) {
         case ARTICLE_REQUEST:
@@ -25,28 +25,55 @@ const articles = (state = {}, action) => {
 
         case ARTICLES_SUCCESS:
             // 获取文章列表
-            let { articles, page, pageSize } = action.data;
-            articles.forEach(article => {
-                let { id, ...left } = article;
-                list[id] = left;
-                list[id].complete = 0;
-            });
+            let { articles, page, pageSize, count } = action.data;
 
-            return { isFetching: false, error: '', page, pageSize, list };
+            // 文章列表中都是哪几页的文章
+            pagination.push(page);
+            pagination.sort((v1, v2) => v1 - v2);
+
+            articles.forEach(article => {
+                article.complete = 0;
+                article.id = article._id;
+                delete article._id;
+            });
+            
+            // 新增文章, 需要从list中删除重复的文章
+            let delCount = 0;               
+            let maxPage = Math.ceil(count / pageSize);
+            
+            // 已经显示过最后一页数据
+            if (page !== maxPage) {
+                delCount = articles.length % pageSize;
+            } else {
+                delCount = count % pageSize;
+            }
+
+            let start = (page - 1) * pageSize;
+            list.splice(start, delCount, ...articles);
+
+            return { isFetching: false, page, pageSize, count, pagination, list };
 
         case ARTICLE_SUCCESS:
             // 获取文章详情
-            console.log('获取文件详情', action);
-            let { id, ...content } = action.data
-            list[id].content = content;
-            list[id].complete = 1;
+            let { _id, ...content } = action.data
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id === _id) {
+                    list[i].content = content;
+                    list[i].complete = 1;
+                    break;
+                }
+            }
             return {...state, isFetching: false, list};
 
         case SAVE_ARTICLE_SUCCESS:
-            let { id: aid, ...left } = action.data;
-            list[aid] = left;
-            list[aid].complete = 1;
-            return { ...state, isFetching: false, list};
+            let { _id: aid, ...left } = action.data;
+            let article = {
+                ...left,
+                id: aid,
+                complete: 0
+            };
+            list.unshift(article);
+            return { ...state, isFetching: false, list, count: state.count + 1};
 
         case ARTICLE_FAILURE:
         case ARTICLES_FAILURE:
@@ -65,8 +92,11 @@ export default articles;
  *  page: 1,
  *  pageSize: 10,
  *  error: '',
- *  list: {
- *      id: {
+ *  count: 20,
+ *  pagination: [],
+ *  list: [
+ *      {
+ *          id: '',
  *          title: '',
  *          tags: [],
  *          content: '',
@@ -74,7 +104,7 @@ export default articles;
  *          updateAt: '',
  *          complete: 0,
  *      },
- *  }
+ *  ]
  * 
  * }
  * 

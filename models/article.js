@@ -20,13 +20,13 @@ ArticleSchema.pre('save', function(next) {
     next();
 });
 
-ArticleSchema.virtual('id').get(function() {
-    return this._id.toString();
-});
+// ArticleSchema.virtual('id').get(function() {
+//     return this._id.toString();
+// });
 
-ArticleSchema.set('toJSON', {
-    virtuals: true
-});
+// ArticleSchema.set('toJSON', {
+//     virtuals: true
+// });
 
 ArticleSchema.index({ create_at: -1 });
 

@@ -5,12 +5,23 @@ mongoose.Promise = global.Promise;
 
 
 exports.list = async function(ctx, next) {
-    var query = Article
+    let count = 0;
+    let articles = [];
+    let { page = 3, pageSize = 10 } = ctx.query;
+    let start = pageSize * (page - 1);
+    let queryCount = Article.count();
+    let query = Article
                     .find()
-                    .select('id title content tags');
+                    .skip(start)
+                    .limit(+pageSize)
+                    .sort({update_at: -1})
+                    .select('title content tags update_at');
 
+    
     try {
-        var data = await query.exec();
+        let data = await Promise.all([queryCount.exec(), query.exec()]);
+        count = data[0];
+        articles = data[1];
     } catch(err) {
         ctx.body = {
             code: 1,
@@ -22,8 +33,13 @@ exports.list = async function(ctx, next) {
 
     ctx.body = {
         code: 0,
-        data: data,
-        msg: 'success'
+        msg: 'success',
+        data: {
+            page,
+            pageSize,
+            articles,
+            count
+        }
     };
 }
 

@@ -3,7 +3,8 @@ const API_ROOT = 'http://localhost:8000';
 
 export default store => next => action => {
     let { types, shouldCallApi, endpoint, params } = action;
-
+    console.log('进入api');
+    console.log('types', types, endpoint);
     // 不是标准的request, success, failute 三种type
     if (typeof types === 'undefined') {
         return next(action);
