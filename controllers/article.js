@@ -46,7 +46,7 @@ exports.list = async function(ctx, next) {
 /**
  * @desc   新增文章
  * @param  {title, tags, content}
- * @return {code, msg, data: { id, title, tags, content, createdAt, updatedAt}}
+ * @return {code, msg, data: { _id, title, tags, content, createdAt, updatedAt}}
  */
 exports.save = async function(ctx, next) {
     var article = ctx.request.body;
@@ -77,7 +77,7 @@ exports.save = async function(ctx, next) {
 /**
  * @desc   编辑文章
  * @param  { id, title, tags, content }
- * @return { id, title, tags, content, updatedAt, createdAt }
+ * @return { code, msg, data: {_id, title, tags, content, updatedAt, createdAt} }
  */
 exports.edit = async function(ctx, next) {
     let { id, ...left } = article;
