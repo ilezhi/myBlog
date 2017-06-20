@@ -45,17 +45,17 @@ export default store => next => action => {
             .then(res => {
                 console.log('res', res);
                 if (res.status !== 200) {
-                    return Promise.reject(res.statusText);
+                    throw new Error(res.statusText);
                 }
                 return res.json();
             })
             .then(res => {
                 let { code, msg, data} = res;
                 if (code) {
-                    return Promise.reject(msg);
+                    throw new Error(msg);
                 }
 
-                return data;
+                return res;
             })
             .then(data => {
                 
@@ -67,7 +67,7 @@ export default store => next => action => {
             .catch(err => {
                 return next({
                     type: failureType,
-                    message: err.message || err
+                    message: err.message
                 });
             });
 }

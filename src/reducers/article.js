@@ -1,3 +1,4 @@
+import { combineReducers } from 'redux';
 import {
     ARTICLES_REQUEST,
     ARTICLES_SUCCESS,
@@ -7,9 +8,13 @@ import {
     ARTICLE_SUCCESS,
     ARTICLE_FAILURE,
 
-    SAVE_ARTICLE_REQUEST,
-    SAVE_ARTICLE_SUCCESS,
-    SAVE_ARTICLE_FAILURE,
+    CREATE_ARTICLE_REQUEST,
+    CREATE_ARTICLE_SUCCESS,
+    CREATE_ARTICLE_FAILURE,
+
+    EDIT_ARTICLE_REQUEST,
+    EDIT_ARTICLE_SUCCESS,
+    EDIT_ARTICLE_FAILURE,
 
     DEL_ARTICLE_REQUEST,
     DEL_ARTICLE_SUCCESS,
@@ -17,112 +22,202 @@ import {
 } from '../constants/articleType';
 
 
-// 获取文章列表
-const articles = (state = {}, action) => {
-    let {list = [], pagination = [] } = state;
-
-    switch(action.type) {
+// 标识请求状态
+const isFetching = (state = false, action) => {
+    switch(action.tyoe) {
         case ARTICLE_REQUEST:
         case ARTICLES_REQUEST:
+        case EDIT_ARTICLE_REQUEST:
+        case CREATE_ARTICLE_REQUEST:
         case DEL_ARTICLE_REQUEST:
-        case SAVE_ARTICLE_REQUEST:
-            return { ...state, isFetching: true, error: ''};
-
-        case ARTICLES_SUCCESS:
-            // 获取文章列表
-            let { articles, page, pageSize, count } = action.data;
-
-            // 文章列表中都是哪几页的文章
-            pagination.push(page);
-            pagination.sort((v1, v2) => v1 - v2);
-
-            articles.forEach(article => {
-                article.complete = 0;
-                article.id = article._id;
-                delete article._id;
-            });
-            
-            // 新增文章, 需要从list中删除重复的文章
-            let delCount = 0;               
-            let maxPage = Math.ceil(count / pageSize);
-            
-            // 已经显示过最后一页数据
-            if (page !== maxPage) {
-                delCount = articles.length % pageSize;
-            } else {
-                delCount = count % pageSize;
-            }
-
-            let start = (page - 1) * pageSize;
-            list.splice(start, delCount, ...articles);
-
-            return { isFetching: false, page, pageSize, count, pagination, list };
+            return true;
 
         case ARTICLE_SUCCESS:
-            // 获取文章详情
-            let { _id, ...content } = action.data
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].id === _id) {
-                    list[i].content = content;
-                    list[i].complete = 1;
-                    break;
-                }
-            }
-            return {...state, isFetching: false, list};
-
-        case SAVE_ARTICLE_SUCCESS:
-            let { _id: aid, ...left } = action.data;
-            let article = {
-                ...left,
-                id: aid,
-                complete: 0
-            };
-            list.unshift(article);
-            return { ...state, isFetching: false, list, count: state.count + 1};
-
+        case ARTICLES_SUCCESS:
+        case EDIT_ARTICLE_SUCCESS:
+        case CREATE_ARTICLE_SUCCESS:
         case DEL_ARTICLE_SUCCESS:
-            let delId = action.data;
-            for (let i = 0; i < list.length; i++) {
-                if (list[i].id === delId) {
-                    list.splice(i, 1);
-                    break;
-                }
-            }
-
-            return { ...state, isFetching: false, list, count: state.count - 1};
 
         case ARTICLE_FAILURE:
         case ARTICLES_FAILURE:
+        case EDIT_ARTICLE_FAILURE:
+        case CREATE_ARTICLE_FAILURE:
         case DEL_ARTICLE_FAILURE:
-        case SAVE_ARTICLE_FAILURE:
-            return { ...state, isFetching: false, error: action.message };
-            
+            return false;
+        
+        default:
+            return state;
+    }
+}
+
+// 返回状态信息
+const message = (state = {}, action) => {
+    switch(action.type) {
+        case ARTICLE_SUCCESS:
+        case ARTICLES_SUCCESS:
+        case EDIT_ARTICLE_SUCCESS:
+        case CREATE_ARTICLE_SUCCESS:
+        case DEL_ARTICLE_SUCCESS:
+            return {
+                type: 'success',
+                message: action.data.msg
+            };
+
+        case ARTICLE_FAILURE:
+        case ARTICLES_FAILURE:
+        case EDIT_ARTICLE_FAILURE:
+        case CREATE_ARTICLE_FAILURE:
+        case DEL_ARTICLE_FAILURE:
+            return {
+                type: 'error',
+                message: action.data.msg
+            };
+
         default:
             return state;
     }
 };
 
-export default articles;
+const pagination = (state = {}, action) => {
+
+    switch(action.type) {
+        case ARTICLES_SUCCESS:
+            let { pageNum: num, pageSize: size, total } = action.data.data;
+            return { num, size, total };
+        case CREATE_ARTICLE_SUCCESS:
+            // 保存文章成功
+            return { ...state, total: ++state.total };
+
+        case DEL_ARTICLE_SUCCESS:
+            return { ...state, total: --state.total };
+
+        default:
+            return state;
+    }
+};
+
+const list = (state = [], action) => {
+    switch(action.type) {
+        case ARTICLE_SUCCESS:
+            // 查询单个文章成功
+            let list = [...state];
+            let noExist = true;
+            for (let i = 0; i < list.length; i++) {
+                if (list[i].id === action.data.data._id) {
+                    list[i].content = action.data.data.content;
+                    list[i].complete = 1;
+                    noExist = false;
+                    break;
+                }
+            }
+
+            // 文章不在列表内,则直接添加到列表内
+            if (noExist) {
+                let { _id, title, tags, content, createdAt, updatedAt } = action.data.data;
+                list.push({
+                    id: _id,
+                    title,
+                    tags,
+                    content,
+                    updatedAt,
+                    createdAt,
+                    complete: 1
+                });
+            }
+
+            return list;
+
+        case ARTICLES_SUCCESS:
+            // 查询文章列表
+            let newList = action.data.data.list.map(article => {
+                let { _id, title, tags, content, createdAt, updatedAt } = article;
+                return {
+                    id: _id,
+                    title,
+                    tags,
+                    content,
+                    createdAt,
+                    updatedAt,
+                    complete: 0
+                }
+            });
+
+            return [...state, ...newList];
+
+        case  CREATE_ARTICLE_SUCCESS:
+            // 新增文章
+            let addList = [...state];
+            let { _id, title, tags, content, createdAt, updatedAt } = action.data.data
+            addlist.unshift({
+                id: _id,
+                title,
+                tags,
+                content,
+                createdAt,
+                updatedAt,
+                complete: 1
+            });
+
+            return addList;
+
+        case EDIT_ARTICLE_SUCCESS:
+            // 编辑文章
+            let editList = [...state];
+            for (let j = 0; j < editList.length; j++) {
+                if (editList[j].id === action.data.data._id) {
+                    let { title, content, tags } = action.data.data;
+                    editList[j].title = title;
+                    editList[j].tags = tags;
+                    editList[j].content = content;
+
+                    break;
+                }
+            }
+
+            return editList;
+
+        case DEL_ARTICLE_SUCCESS:
+            // 删除文章
+            let delList = [...state];
+            for (let k = 0; k < delList.length; k++) {
+                if (delList[k].id === action.data.data.id) {
+                    delList.splice(k, 1);
+                    break;
+                }
+            }
+
+            return delList;
+            
+        default:
+            return state;
+    }
+}
+
+export default combineReducers({
+    isFetching,
+    message,
+    pagination,
+    list
+});
+
+
 
 /**
- * article: {
- *  isFetching: false,
- *  page: 1,
- *  pageSize: 10,
- *  error: '',
- *  count: 20,
- *  pagination: [],
- *  list: [
- *      {
- *          id: '',
- *          title: '',
- *          tags: [],
- *          content: '',
- *          createAt: '',
- *          updateAt: '',
- *          complete: 0,
+ * 文章列表state
+ * {
+ *      isFetching,
+ *      message: {
+ *          type: success|error
+ *          text: '添加成功'
  *      },
- *  ]
+ *      pagination: {
+ *          num: 1,
+ *          size: 20,
+ *          total: 20
+ *      }
+ *      list: []
+ * 
+ * 
  * 
  * }
  * 
@@ -131,6 +226,4 @@ export default articles;
  * 
  * 
  * 
- * 
  */
-

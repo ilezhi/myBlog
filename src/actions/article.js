@@ -3,9 +3,13 @@ import {
     ARTICLES_SUCCESS,
     ARTICLES_FAILURE,
 
-    SAVE_ARTICLE_REQUEST,
-    SAVE_ARTICLE_SUCCESS,
-    SAVE_ARTICLE_FAILURE,
+    CREATE_ARTICLE_REQUEST,
+    CREATE_ARTICLE_SUCCESS,
+    CREATE_ARTICLE_FAILURE,
+
+    EDIT_ARTICLE_REQUEST,
+    EDIT_ARTICLE_SUCCESS,
+    EDIT_ARTICLE_FAILURE,
 
     DEL_ARTICLE_REQUEST,
     DEL_ARTICLE_SUCCESS,
@@ -26,11 +30,23 @@ export const fetchArticles = (params) => {
 };
 
 
-// 保存文章
+// 新增文章
 export const saveArticle = article => {
     return {
         types: [SAVE_ARTICLE_REQUEST, SAVE_ARTICLE_SUCCESS, SAVE_ARTICLE_FAILURE],
         endpoint: '/api/article/save',
+        params: {
+            type: 'POST',
+            data: article
+        }
+    };
+};
+
+// 编辑文章
+export const editArticle = article => {
+    return {
+        types: [EDIT_ARTICLE_REQUEST, EDIT_ARTICLE_SUCCESS, EDIT_ARTICLE_FAILURE],
+        endpoint: '/api/article/edit',
         params: {
             type: 'POST',
             data: article

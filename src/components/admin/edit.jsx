@@ -14,8 +14,8 @@ import { saveArticle } from '../../actions/article';
 import styles from '../../styles/site';
 
 import {
-    SAVE_ARTICLE_SUCCESS,
-    SAVE_ARTICLE_FAILURE,
+    CREATE_ARTICLE_SUCCESS,
+    CREATE_ARTICLE_FAILURE,
 } from '../../constants/articleType';
 
 import {
