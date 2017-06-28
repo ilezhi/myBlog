@@ -1,3 +1,4 @@
+import { combineReducers } from 'redux';
 import {
     TAG_REQUEST,
     TAG_SUCCESS,
@@ -8,32 +9,64 @@ import {
     ADD_TAG_FAILURE
 } from '../constants/tagType';
 
-
-const tags = (state = {tags: []}, action) => {
+const isFetching = (state = false, action) => {
     switch(action.type) {
         case TAG_REQUEST:
         case ADD_TAG_REQUEST:
-            return { ...state, isFetching: true, error: '' };
+            return true;
+        
         case TAG_SUCCESS:
-            return { ...state, isFetching: false, tags: action.data };
         case ADD_TAG_SUCCESS:
-            let newState = { ...state, isFetching: false };
-            newState.tags.push(...action.data);
-            return newState;
         case TAG_FAILURE:
         case ADD_TAG_FAILURE:
-            return { ...state, isFetching: false, error: action.message };
+            return false;
+        
         default:
             return state;
     }
 };
 
-export default tags;
+const message = (state = {}, action) => {
+    switch(action.type) {
+        case TAG_SUCCESS:
+        case ADD_TAG_SUCCESS:
+            return { type: 'success', text: action.data.msg };
+        
+        case TAG_FAILURE:
+        case ADD_TAG_FAILURE:
+            return { type: 'error', text: action.data.msg };
+        
+        default:
+            return state;
+    }
+};
+
+const list = (state = [], action) => {
+    switch(action.type) {
+        case TAG_SUCCESS:
+            return [ ...action.data.data ];
+        
+        case ADD_TAG_SUCCESS:
+            return [ ...state, action.data.data];
+        
+        default:
+            return state;
+    }
+};
+
+export default combineReducers({
+    isFetching,
+    message,
+    list
+});
 
 /**
  * tags: {
  *   isFetching: false,
- *   error: '',
+ *   message: {
+ *      type: '',
+ *      text: ''
+ *   },
  *   tags: [
  *      {
  *          id: '',
