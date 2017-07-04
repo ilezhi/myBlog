@@ -31,10 +31,10 @@ class Edit extends Component {
 
         this.state = {
             title: props.title,
-            tags: props.tags,
             content: props.content,
-            active: props.active,
             tagsSelected: props.tagsSelected,
+            message: '',
+            active: false,
         };
 
 
@@ -52,9 +52,8 @@ class Edit extends Component {
     // }
     async componentDidMount() {
         // 获取标签列表
-        if (this.props.mode === 0 && !('_id' in this.state.tags)) {
-            await this.props.fetchTags();
-            this.setState({...this.state, tags: this.props.tags});
+        if (this.props.mode === 0 && !('_id' in this.props.tags)) {
+            this.props.fetchTags();
         }
 
         // 初始化markdown编辑器
@@ -62,27 +61,25 @@ class Edit extends Component {
         md.render();
     }
     render() {
-        let { title, content, tags, active, tagsSelected } = this.state;
+        let { title, content, tagsSelected, message, active } = this.state;
         // // 添加标签后消息提示
-        // let { tagLoading, tagSource, saving, msg, msgType } = this.props;
-        // console.log('saving', saving);
         let classname = cs(styles.mask, {
             [styles.active]: this.props.active
         });
 
-        // let saveArticle = cs(styles.fullMask, {
-        //     [styles.active]: saving
-        // });
+        let saveArticle = cs(styles.fullMask, {
+            [styles.active]: false
+        });
+
         return (
             <div>
-                <Input label='标题' />
+                <Input label='标题' onChange={this.changeTitle} value={title} />
                 <div style={{"position":"relative"}}>
                     <Autocomplete
                         direction='down'
                         allowCreate={true}
-                        selectedPosition='above'
-                        label='添加标签'
                         showSelectedWhenNotInSource={true}
+                        label='添加标签'
                         source={this.props.tags}
                         onChange={this.editTag}
                         value={tagsSelected}
@@ -94,8 +91,9 @@ class Edit extends Component {
                 <div>
                     <textarea value={content}></textarea>
                 </div>
-                <Button label='保存' raised />
-                <div><ProgressBar type='circular' mode='indeterminate' /></div>
+                <Button label='保存' raised onClick={this.saveArticle} />
+                <div className={saveArticle}><ProgressBar type='circular' mode='indeterminate' /></div>
+                <Snackbar action='Dismiss' label={message} active={active} timeout={3000} onTimeout={this.SnackbarTimeout} />
             </div>
         );
     }
@@ -106,18 +104,63 @@ class Edit extends Component {
         
         // 删除完所选标签
         if (tag === undefined) {
-            this.setState({...this.state, tagsSelected: []});
+            this.setState({...this.state, tagsSelected: val});
             return;
         }
 
-        // 判断是已有标签，还是新增标签
-        // 新增标签
-        if (!(tag in this.props.tags)) {
-            let res = await this.props.addTag(tag);
-            val.splice(0, 1, res.data.data._id);
+        // 添加已有标签
+        // 回车tag为值，此处需要获取到键
+        let tags = this.props.tags;
+        let exist = false;
+        let key = '';
+        for (let prop in tags) {
+            if (tag === prop || tag === tags[prop]) {
+                exist = true;
+                key = prop;
+                break;
+            }
+        }
+        if (exist) {
+            val.splice(0, 1, key);
+            this.setState({...this.state, tagsSelected: val});
+            return;
         }
 
-        this.setState({...this.state, tagsSelected: val});
+        // 新增标签
+        let message = '';
+        let active = false;
+        let res;
+        try {
+            res = await this.props.addTag(tag);
+            if (res.type === ADD_TAG_FAILURE) {
+                throw new Error(res.message);
+            }
+            val.splice(0, 1, res.data.data._id);
+
+            this.setState({...this.state, tagsSelected: val});
+        } catch (err) {
+            this.setState({...this.state, active: true, message: err.message});
+        }
+    };
+
+    changeTitle = val => {
+        this.setState({...this.state, title: val.trim()});
+    }
+
+    saveArticle = () => {
+        let article = {
+            title: this.state.title,
+            content: md.codemirror.getValue().trim(),
+            tags: this.state.tagsSelected
+        };
+
+        if (article.content === '') {
+            
+        }
+    }
+
+    SnackbarTimeout = () => {
+        this.setState({...this.state, active: false});
     }
 }
 
@@ -143,6 +186,7 @@ const mapStateToProps = state => {
             active: state.tags.isFetching,
             tagsSelected: [],
             mode: 1,
+            message: state.tags.message,
         };
     } else {
         return {
@@ -152,6 +196,7 @@ const mapStateToProps = state => {
             active: state.tags.isFetching,
             tagsSelected: [],
             mode: 0,
+            message: state.tags.message,
         };
     }
 };
