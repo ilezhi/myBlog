@@ -127,11 +127,8 @@ class Edit extends Component {
         }
 
         // 新增标签
-        let message = '';
-        let active = false;
-        let res;
         try {
-            res = await this.props.addTag(tag);
+            let res = await this.props.addTag(tag);
             if (res.type === ADD_TAG_FAILURE) {
                 throw new Error(res.message);
             }
@@ -144,19 +141,42 @@ class Edit extends Component {
     };
 
     changeTitle = val => {
-        this.setState({...this.state, title: val.trim()});
+        this.setState({...this.state, title: val});
     }
 
-    saveArticle = () => {
-        let article = {
-            title: this.state.title,
-            content: md.codemirror.getValue().trim(),
-            tags: this.state.tagsSelected
-        };
+    saveArticle = async () => {
+        let title = this.state.title.trim();
+        let content = md.codemirror.getValue().trim();
+        let tags = this.state.tagsSelected;
 
-        if (article.content === '') {
-            
+        if (content === '') {
+            this.setState({...this.state, active: true, message: '文章内容不能为空'});
+            return;
         }
+
+        // 保存文章
+        let active = false;
+        let message = '';
+        try {
+            let res = await this.props.saveArticle({
+                title, content, tags
+            });
+
+            if (res.type.includes('FAILURE')) {
+                console.log('failure');
+                throw new Error(res.message);
+            }
+
+            if (res.type.includes('SUCCESS')) {
+                console.log('success');
+                active = true;
+                message = res.data.msg;
+            }
+        } catch (err) {
+            active = true;
+            message = err.message;
+        }
+        this.setState({...this.state, active, message});
     }
 
     SnackbarTimeout = () => {

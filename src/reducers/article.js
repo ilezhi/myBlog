@@ -148,7 +148,7 @@ const list = (state = [], action) => {
             // 新增文章
             let addList = [...state];
             let { _id, title, tags, content, createdAt, updatedAt } = action.data.data
-            addlist.unshift({
+            addList.unshift({
                 id: _id,
                 title,
                 tags,

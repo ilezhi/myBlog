@@ -33,7 +33,7 @@ export const fetchArticles = (params) => {
 // 新增文章
 export const saveArticle = article => {
     return {
-        types: [SAVE_ARTICLE_REQUEST, SAVE_ARTICLE_SUCCESS, SAVE_ARTICLE_FAILURE],
+        types: [CREATE_ARTICLE_REQUEST, CREATE_ARTICLE_SUCCESS, CREATE_ARTICLE_FAILURE],
         endpoint: '/api/article/save',
         params: {
             type: 'POST',
