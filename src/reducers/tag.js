@@ -15,14 +15,8 @@ const isFetching = (state = false, action) => {
         case ADD_TAG_REQUEST:
             return true;
         
-        case TAG_SUCCESS:
-        case ADD_TAG_SUCCESS:
-        case TAG_FAILURE:
-        case ADD_TAG_FAILURE:
-            return false;
-        
         default:
-            return state;
+            return false;
     }
 };
 
@@ -34,7 +28,7 @@ const message = (state = {}, action) => {
         
         case TAG_FAILURE:
         case ADD_TAG_FAILURE:
-            return { type: 'error', text: action.data.msg };
+            return { type: 'error', text: action.message };
         
         default:
             return state;
@@ -47,7 +41,7 @@ const list = (state = [], action) => {
             return [ ...action.data.data ];
         
         case ADD_TAG_SUCCESS:
-            return [ ...state, action.data.data];
+            return [...state, action.data.data];
         
         default:
             return state;
@@ -67,7 +61,7 @@ export default combineReducers({
  *      type: '',
  *      text: ''
  *   },
- *   tags: [
+ *   list: [
  *      {
  *          id: '',
  *          name: '',

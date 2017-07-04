@@ -20,3 +20,14 @@ export const addTag = tag => {
         }
     };
 };
+
+export const fetchTags = () => {
+    return {
+        types: [TAG_REQUEST, TAG_SUCCESS, TAG_FAILURE],
+        shouldCallApi: () => true,
+        endpoint: '/api/tag/list',
+        params: {
+            type: 'GET'
+        }
+    };
+};

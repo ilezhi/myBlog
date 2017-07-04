@@ -9,7 +9,7 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import cs from 'classnames';
 
 import fetchData from '../../assets/js/fetch';
-import { addTag } from '../../actions/tag';
+import { addTag, fetchTags } from '../../actions/tag';
 import { saveArticle } from '../../actions/article';
 import styles from '../../styles/site';
 
@@ -23,7 +23,6 @@ import {
     ADD_TAG_FAILURE
 } from '../../constants/tagType';
 
-let source = ['javascrpt', 'web', '散文', '算法'];
 let md = null;
 class Edit extends Component {
     constructor(props) {
@@ -31,11 +30,12 @@ class Edit extends Component {
         // let operation = props.location.pathname.substring(1).split('/')[1];
 
         this.state = {
-            title: '',
-            tags: [],
-            content: '',
-            active: false,
-        }
+            title: props.title,
+            tags: props.tags,
+            content: props.content,
+            active: props.active,
+            tagsSelected: props.tagsSelected,
+        };
 
 
         // if (operation === 'edit') {
@@ -50,23 +50,29 @@ class Edit extends Component {
     // static defaultProps = {
 
     // }
-    componentDidMount() {
+    async componentDidMount() {
+        // 获取标签列表
+        if (this.props.mode === 0 && !('_id' in this.state.tags)) {
+            await this.props.fetchTags();
+            this.setState({...this.state, tags: this.props.tags});
+        }
+
+        // 初始化markdown编辑器
         md = new Editor();
         md.render();
     }
     render() {
-        let { title, content, tags, active } = this.state;
+        let { title, content, tags, active, tagsSelected } = this.state;
         // // 添加标签后消息提示
         // let { tagLoading, tagSource, saving, msg, msgType } = this.props;
         // console.log('saving', saving);
-        // let classname = cs(styles.mask, {
-        //     [styles.active]: tagLoading
-        // });
+        let classname = cs(styles.mask, {
+            [styles.active]: this.props.active
+        });
 
         // let saveArticle = cs(styles.fullMask, {
         //     [styles.active]: saving
         // });
-
         return (
             <div>
                 <Input label='标题' />
@@ -76,13 +82,14 @@ class Edit extends Component {
                         allowCreate={true}
                         selectedPosition='above'
                         label='添加标签'
-                        source={source}
-                        onChange={this.changeTags}
-                        value={tags}
+                        showSelectedWhenNotInSource={true}
+                        source={this.props.tags}
+                        onChange={this.editTag}
+                        value={tagsSelected}
                     />
-                    {/*<div className={classname}>
+                    <div className={classname}>
                         <ProgressBar className={styles.wh} type='circular' mode='indeterminate' />
-                    </div>*/}
+                    </div>
                 </div>
                 <div>
                     <textarea value={content}></textarea>
@@ -92,86 +99,26 @@ class Edit extends Component {
             </div>
         );
     }
-    // changeTags = async tags => {
-    //     console.log('change');
-    //     var state = { ...this.state };
-    //     // delete all tags
-    //     if (tags.length === 0) {
-    //         console.log('删除标签');
-    //         state.tags = [];
-    //         this.setState(state);
-    //         return;
-    //     }
 
-    //     var tag = tags[0];
+    editTag = async val => {
+        // 判断标签是否为新增
+        let tag = val[0];
+        
+        // 删除完所选标签
+        if (tag === undefined) {
+            this.setState({...this.state, tagsSelected: []});
+            return;
+        }
 
-    //     // add existing tag
-    //     if (this.props.tagSource.includes(tag)) {
-    //         console.log('已存在标签');
-    //         state.tags = tags;
-    //         this.setState(state);
-    //         return;
-    //     }
+        // 判断是已有标签，还是新增标签
+        // 新增标签
+        if (!(tag in this.props.tags)) {
+            let res = await this.props.addTag(tag);
+            val.splice(0, 1, res.data.data._id);
+        }
 
-    //     // add new tag
-    //     let { addTag } = this.props;
-    //     let res = await addTag(tag);
-
-    //     state.active = true;
-    //     // add tag successfully
-    //     if (res.type === ADD_TAG_SUCCESS) {
-    //         state.tags.push(tag);
-    //         state.active = true;
-    //     }
-
-    //     this.setState(state);
-
-    // };
-
-    // // 标题修改
-    // changeTitle = title => {
-    //     let state = { ...this.state };
-    //     state.title = title;
-    //     this.setState(state);
-    // }
-
-    // saveArticle = async () => {
-    //     let title = this.state.title.trim();
-    //     if (title === '') {
-    //         alert('请填写标题');
-    //         return;
-    //     }
-
-    //     let params = {
-    //         title: this.state.title,
-    //         content: md.codemirror.getValue(),
-    //         tags: this.state.tags,
-    //     };
-
-    //     let operation = this.props.location.pathname.substring(1).split('/')[1];
-    //     if (operation === 'edit') {
-    //         params.id = props.params.id;
-    //     }
-
-    //     let res = await this.props.saveArticle(params);
-
-    //     if (res.type === SAVE_ARTICLE_SUCCESS) {
-    //         // 进入文章列表页
-    //         console.log('save success', res);
-    //         browserHistory.push('/admin/article');
-    //         return;
-    //     }
-
-    //     // 保存失败
-    //     this.setState({...this.state, active: true});
-    // }
-
-    // snackbarTimeout = () => {
-    //     this.setState({
-    //         ...this.state,
-    //         active: false
-    //     });
-    // }
+        this.setState({...this.state, tagsSelected: val});
+    }
 }
 
 
@@ -179,16 +126,34 @@ const mapStateToProps = state => {
     let pathname = state.routing.locationBeforeTransitions.pathname;
     let mode = pathname.substring(1).split('\/')[2];
 
-    if (mode !== 'edit') {
+    let tags = {};
+
+    if (state.tags.list.length > 0) {
+        // 将tag提取称字符串数组
+        state.tags.list.forEach(item => {
+            tags[item._id] = item.tag
+        });
+    }
+
+    if (mode === 'edit') {
         return {
             title: '',
-            tags: [],
+            tags: tags,
             content: '',
-            active: false
+            active: state.tags.isFetching,
+            tagsSelected: [],
+            mode: 1,
         };
     } else {
-        return {};
+        return {
+            title: '',
+            tags: tags,
+            content: '',
+            active: state.tags.isFetching,
+            tagsSelected: [],
+            mode: 0,
+        };
     }
 };
 
-export default connect(mapStateToProps, { addTag, saveArticle })(Edit);
+export default connect(mapStateToProps, { addTag, saveArticle, fetchTags })(Edit);
