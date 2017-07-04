@@ -28,7 +28,7 @@ export default store => next => action => {
         }
     }
 
-    if (type.toUpperCase() === 'GET') {
+    if (type.toUpperCase() === 'GET' && data) {
         let queryStr = '?' + Object.keys(data).map(key => {
             return key + '=' + data[key];
         }).join('&');
@@ -43,7 +43,6 @@ export default store => next => action => {
     next({type: requestType});
     return fetch(endpoint, requestConfig)
             .then(res => {
-                console.log('res', res);
                 if (res.status !== 200) {
                     throw new Error(res.statusText);
                 }
@@ -52,6 +51,7 @@ export default store => next => action => {
             .then(res => {
                 let { code, msg, data} = res;
                 if (code) {
+                    console.log('throw code', code);
                     throw new Error(msg);
                 }
 
@@ -65,6 +65,7 @@ export default store => next => action => {
                 });
             })
             .catch(err => {
+                console.log('err', err);
                 return next({
                     type: failureType,
                     message: err.message
