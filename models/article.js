@@ -6,7 +6,7 @@ const ArticleSchema = new Schema({
     title: { type: String },
     content: { type: String },
     author_id: { type: ObjectId },
-    tags: [],
+    tags: [{type: ObjectId, ref: 'Tag'}],
 
     reply_count: { type: Number, default: 0 },
     visit_count: { type: Number, default: 0 },
