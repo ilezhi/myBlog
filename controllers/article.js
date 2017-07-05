@@ -49,13 +49,29 @@ exports.list = async function(ctx, next) {
  * @return {code, msg, data: { _id, title, tags, content, createdAt, updatedAt}}
  */
 exports.save = async function(ctx, next) {
-    var article = ctx.request.body;
+    var { title, tags, content } = ctx.request.body;
+
+    let msg = '';
+
+    if (title === '') {
+        msg = '标题不能为空';
+    } else if (title.length < 5 || title.length > 20) {
+        msg = '标题字数不能超过20字';
+    } else if (content === '') {
+        msg = ''
+    }
+
+    if (msg) {
+        return ctx.body = {
+            code: 1,
+            msg
+        };
+    }
 
 
-    var newArticle = new Article(article);
-    console.log('article', article);
+    var article = new Article({title, tags, content});
     try {
-        var a = await newArticle.save();
+        var newArticle = await article.save();
     } catch (err) {
         return ctx.body = {
             code: 1,
@@ -66,10 +82,7 @@ exports.save = async function(ctx, next) {
     return ctx.body = {
         code: 0,
         msg: 'success',
-        data: {
-            id: a._id,
-            ...article
-        }
+        data: newArticle
     };
 };
 

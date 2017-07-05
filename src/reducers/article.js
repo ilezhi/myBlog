@@ -24,29 +24,16 @@ import {
 
 // 标识请求状态
 const isFetching = (state = false, action) => {
-    switch(action.tyoe) {
+    switch(action.type) {
         case ARTICLE_REQUEST:
         case ARTICLES_REQUEST:
         case EDIT_ARTICLE_REQUEST:
         case CREATE_ARTICLE_REQUEST:
         case DEL_ARTICLE_REQUEST:
             return true;
-
-        case ARTICLE_SUCCESS:
-        case ARTICLES_SUCCESS:
-        case EDIT_ARTICLE_SUCCESS:
-        case CREATE_ARTICLE_SUCCESS:
-        case DEL_ARTICLE_SUCCESS:
-
-        case ARTICLE_FAILURE:
-        case ARTICLES_FAILURE:
-        case EDIT_ARTICLE_FAILURE:
-        case CREATE_ARTICLE_FAILURE:
-        case DEL_ARTICLE_FAILURE:
-            return false;
         
         default:
-            return state;
+            return false;
     }
 }
 
@@ -78,7 +65,7 @@ const message = (state = {}, action) => {
     }
 };
 
-const pagination = (state = {}, action) => {
+const pagination = (state = { num: 1, size: 20, total: 0}, action) => {
 
     switch(action.type) {
         case ARTICLES_SUCCESS:
@@ -103,7 +90,7 @@ const list = (state = [], action) => {
             let list = [...state];
             let noExist = true;
             for (let i = 0; i < list.length; i++) {
-                if (list[i].id === action.data.data._id) {
+                if (list[i]._id === action.data.data._id) {
                     list[i].content = action.data.data.content;
                     list[i].complete = 1;
                     noExist = false;
@@ -113,14 +100,16 @@ const list = (state = [], action) => {
 
             // 文章不在列表内,则直接添加到列表内
             if (noExist) {
-                let { _id, title, tags, content, createdAt, updatedAt } = action.data.data;
+                let { _id, title, tags, content, reply_count, visit_count, create_at, update_at } = action.data.data;
                 list.push({
-                    id: _id,
+                    _id,
                     title,
                     tags,
                     content,
-                    updatedAt,
-                    createdAt,
+                    reply_count,
+                    visit_count,
+                    update_at,
+                    create_at,
                     complete: 1
                 });
             }
@@ -130,14 +119,16 @@ const list = (state = [], action) => {
         case ARTICLES_SUCCESS:
             // 查询文章列表
             let newList = action.data.data.list.map(article => {
-                let { _id, title, tags, content, createdAt, updatedAt } = article;
+                let { _id, title, tags, content, reply_count, visit_count, create_at, update_at } = article;
                 return {
-                    id: _id,
+                    _id,
                     title,
                     tags,
                     content,
-                    createdAt,
-                    updatedAt,
+                    reply_count,
+                    visit_count,
+                    create_at,
+                    update_at,
                     complete: 0
                 }
             });
@@ -147,14 +138,16 @@ const list = (state = [], action) => {
         case  CREATE_ARTICLE_SUCCESS:
             // 新增文章
             let addList = [...state];
-            let { _id, title, tags, content, createdAt, updatedAt } = action.data.data
+            let { _id, title, tags, content, reply_count, visit_count, create_at, update_at } = action.data.data
             addList.unshift({
-                id: _id,
+                _id,
                 title,
                 tags,
                 content,
-                createdAt,
-                updatedAt,
+                reply_count,
+                visit_count,
+                create_at,
+                update_at,
                 complete: 1
             });
 
@@ -164,7 +157,7 @@ const list = (state = [], action) => {
             // 编辑文章
             let editList = [...state];
             for (let j = 0; j < editList.length; j++) {
-                if (editList[j].id === action.data.data._id) {
+                if (editList[j]._id === action.data.data._id) {
                     let { title, content, tags } = action.data.data;
                     editList[j].title = title;
                     editList[j].tags = tags;
@@ -180,7 +173,7 @@ const list = (state = [], action) => {
             // 删除文章
             let delList = [...state];
             for (let k = 0; k < delList.length; k++) {
-                if (delList[k].id === action.data.data.id) {
+                if (delList[k]._id === action.data.data.id) {
                     delList.splice(k, 1);
                     break;
                 }

@@ -68,7 +68,7 @@ class Edit extends Component {
         });
 
         let saveArticle = cs(styles.fullMask, {
-            [styles.active]: false
+            [styles.active]: this.props.fetching
         });
 
         return (
@@ -89,7 +89,7 @@ class Edit extends Component {
                     </div>
                 </div>
                 <div>
-                    <textarea value={content}></textarea>
+                    <textarea defaultValue={content}></textarea>
                 </div>
                 <Button label='保存' raised onClick={this.saveArticle} />
                 <div className={saveArticle}><ProgressBar type='circular' mode='indeterminate' /></div>
@@ -148,35 +148,52 @@ class Edit extends Component {
         let title = this.state.title.trim();
         let content = md.codemirror.getValue().trim();
         let tags = this.state.tagsSelected;
+        let message = '';
 
-        if (content === '') {
-            this.setState({...this.state, active: true, message: '文章内容不能为空'});
+        if (title === '') {
+            message = '标题不能为空';
+        } else if (title.length < 5 || title.length > 20) {
+            message = '标题太长或太短';
+        } else if (content === '') {
+            message = '文章内容不能为空';
+        } 
+
+        if (message) {
+            this.setState({...this.state, active: true, message});
             return;
         }
 
         // 保存文章
         let active = false;
-        let message = '';
         try {
             let res = await this.props.saveArticle({
                 title, content, tags
             });
 
             if (res.type.includes('FAILURE')) {
-                console.log('failure');
                 throw new Error(res.message);
             }
 
             if (res.type.includes('SUCCESS')) {
-                console.log('success');
                 active = true;
                 message = res.data.msg;
+                md.codemirror.setValue('');
+                this.setState({
+                    ...this.state,
+                    title: '',
+                    content: '',
+                    tagsSelected: [],
+                    active,
+                    message
+                });
+
+                // TODO: 保存成功跳到文章列表页
             }
         } catch (err) {
             active = true;
             message = err.message;
+            this.setState({...this.state, active, message});
         }
-        this.setState({...this.state, active, message});
     }
 
     SnackbarTimeout = () => {
@@ -203,6 +220,7 @@ const mapStateToProps = state => {
             title: '',
             tags: tags,
             content: '',
+            fetching: state.articles.isFetching,
             active: state.tags.isFetching,
             tagsSelected: [],
             mode: 1,
@@ -213,10 +231,12 @@ const mapStateToProps = state => {
             title: '',
             tags: tags,
             content: '',
+            fetching: state.articles.isFetching,
             active: state.tags.isFetching,
             tagsSelected: [],
             mode: 0,
             message: state.tags.message,
+            
         };
     }
 };
