@@ -126,3 +126,13 @@ body {
 .articleItem {
     border-top: 1px solid #ddd;
 }
+
+.createArticle {
+    padding: 0.1rem 0;
+    border-bottom: 1px solid #eee;
+    margin: 0 0 0.2rem;
+}
+
+.bb {
+    border-bottom: 1px solid #eee;
+}
