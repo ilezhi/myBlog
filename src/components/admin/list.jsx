@@ -99,7 +99,7 @@ class ArticleList extends Component {
     // 编辑文章
     editArticle(id) {
         event.stopPropagation();
-        console.log(id);
+        browserHistory.push(`/admin/article/edit/${id}`);
     }
 
     // 删除文章

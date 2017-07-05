@@ -5,6 +5,7 @@ var tag = require('../controllers/tag');
 
 router.get('/article/list', article.list);
 router.post('/article/save', article.save);
+router.post('/article/edit', article.edit);
 router.post('/article/del', article.del);
 
 

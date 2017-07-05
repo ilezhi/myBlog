@@ -110,7 +110,6 @@ const list = (state = [], action) => {
                     visit_count,
                     update_at,
                     create_at,
-                    complete: 1
                 });
             }
 
@@ -118,22 +117,7 @@ const list = (state = [], action) => {
 
         case ARTICLES_SUCCESS:
             // 查询文章列表
-            let newList = action.data.data.list.map(article => {
-                let { _id, title, tags, content, reply_count, visit_count, create_at, update_at } = article;
-                return {
-                    _id,
-                    title,
-                    tags,
-                    content,
-                    reply_count,
-                    visit_count,
-                    create_at,
-                    update_at,
-                    complete: 0
-                }
-            });
-
-            return [...state, ...newList];
+            return [...state, ...action.data.data.list];
 
         case  CREATE_ARTICLE_SUCCESS:
             // 新增文章
@@ -147,8 +131,7 @@ const list = (state = [], action) => {
                 reply_count,
                 visit_count,
                 create_at,
-                update_at,
-                complete: 1
+                update_at
             });
 
             return addList;
@@ -158,11 +141,8 @@ const list = (state = [], action) => {
             let editList = [...state];
             for (let j = 0; j < editList.length; j++) {
                 if (editList[j]._id === action.data.data._id) {
-                    let { title, content, tags } = action.data.data;
-                    editList[j].title = title;
-                    editList[j].tags = tags;
-                    editList[j].content = content;
-
+                    let { __v, ...left } = action.data.data;
+                    editList[j] = left;
                     break;
                 }
             }

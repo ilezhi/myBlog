@@ -14,7 +14,7 @@ exports.list = async function(ctx, next) {
                     .skip(start)
                     .limit(+pageSize)
                     .sort({update_at: -1})
-                    .select('title content tags update_at');
+                    .select('title content tags update_at create_at reply_count visit_count');
 
     
     let total = 0;
@@ -95,10 +95,46 @@ exports.save = async function(ctx, next) {
  * @return { code, msg, data: {_id, title, tags, content, updatedAt, createdAt} }
  */
 exports.edit = async function(ctx, next) {
-    let { id, ...left } = article;
-    var a = await Article.update({_id: id});
-    console.log('update', a);
-}
+    let { id, ...update } = ctx.request.body;
+    let { title, content } = update;
+    let msg = '';
+
+    if (title === '') {
+        msg = '标题不能为空';
+    } else if (title.length < 5 || title.length > 20) {
+        msg = '标题字数不能超过20字';
+    } else if (content === '') {
+        msg = ''
+    }
+
+    if (msg) {
+        return ctx.body = {
+            code: 1,
+            msg
+        };
+    }
+
+    try {
+        let now = new Date();
+        update.update_at = now;
+        await Article.findByIdAndUpdate({_id: id}, update).exec();
+        let query = Article.findById({_id: id});
+        let a = await query.exec();
+        delete a._v;
+        return ctx.body = {
+            code: 0,
+            msg: 'success',
+            data: a
+        };
+
+        
+    } catch (err) {
+        ctx.body = {
+            code: 1,
+            msg: err.message
+        };
+    }
+};
 
 // 删除文章
 exports.del = async function(ctx, next) {

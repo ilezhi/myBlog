@@ -10,7 +10,7 @@ import cs from 'classnames';
 
 import fetchData from '../../assets/js/fetch';
 import { addTag, fetchTags } from '../../actions/tag';
-import { saveArticle } from '../../actions/article';
+import { saveArticle, editArticle } from '../../actions/article';
 import styles from '../../styles/site';
 
 import {
@@ -27,32 +27,20 @@ let md = null;
 class Edit extends Component {
     constructor(props) {
         super(props);
-        // let operation = props.location.pathname.substring(1).split('/')[1];
 
+        let { title, content, } = props.article;
         this.state = {
-            title: props.title,
-            content: props.content,
+            title,
+            content,
             tagsSelected: props.tagsSelected,
             message: '',
             active: false,
         };
-
-
-        // if (operation === 'edit') {
-        //     let id = props.params.id;
-        //     let article = props.articles[id];
-
-        //     this.state.title = article.title;
-        //     this.state.tags = article.tags;
-        //     this.state.content = article.content;
-        // }
     }
-    // static defaultProps = {
-
-    // }
+    
     async componentDidMount() {
         // 获取标签列表
-        if (this.props.mode === 0 && !('_id' in this.props.tags)) {
+        if (!('_id' in this.props.tags)) {
             this.props.fetchTags();
         }
 
@@ -60,8 +48,10 @@ class Edit extends Component {
         md = new Editor();
         md.render();
     }
+
     render() {
         let { title, content, tagsSelected, message, active } = this.state;
+        
         // // 添加标签后消息提示
         let classname = cs(styles.mask, {
             [styles.active]: this.props.active
@@ -165,10 +155,17 @@ class Edit extends Component {
 
         // 保存文章
         let active = false;
+        let res = null;
         try {
-            let res = await this.props.saveArticle({
+            let params = {
                 title, content, tags
-            });
+            };
+            if (this.props.mode === 0) {
+                res = await this.props.saveArticle(params);
+            } else {
+                params.id = this.props.article._id;
+                res = await this.props.editArticle(params);
+            }
 
             if (res.type.includes('FAILURE')) {
                 throw new Error(res.message);
@@ -188,6 +185,9 @@ class Edit extends Component {
                 });
 
                 // TODO: 保存成功跳到文章列表页
+                setTimeout(() => {
+                    browserHistory.push('/admin/article');
+                }, 1500);
             }
         } catch (err) {
             active = true;
@@ -203,8 +203,8 @@ class Edit extends Component {
 
 
 const mapStateToProps = state => {
-    let pathname = state.routing.locationBeforeTransitions.pathname;
-    let mode = pathname.substring(1).split('\/')[2];
+    let pathname = state.routing.locationBeforeTransitions.pathname.substring(1).split('\/');
+    let mode = pathname[2];
 
     let tags = {};
 
@@ -215,22 +215,43 @@ const mapStateToProps = state => {
         });
     }
 
+    // 编辑
     if (mode === 'edit') {
+        let id = pathname[3];
+        let data = null;
+        let articles = state.articles.list;
+
+        // 查询所属id文章
+        for (let i = 0; i < articles.length; i++) {
+            if (articles[i]._id === id) {
+                data = articles[i];
+                break;
+            }
+        }
+
+        // 获取已选标签id数组
+        let tagData = data.tags.map(tag => {
+            return tag._id;
+        });
+
         return {
-            title: '',
-            tags: tags,
-            content: '',
-            fetching: state.articles.isFetching,
-            active: state.tags.isFetching,
-            tagsSelected: [],
-            mode: 1,
-            message: state.tags.message,
+            article: data,                          
+            tags: tags,                             // 所有标签
+            fetching: state.articles.isFetching,    // 文章请求状态
+            active: state.tags.isFetching,          // 标签请求状态
+            tagsSelected: tagData,                  // 文章已有标签
+            mode: 1,                                // 编辑模式
+            message: state.tags.message,            // 标签返回信息
         };
     } else {
         return {
-            title: '',
+            article: {
+                title: '',
+                tags: [],
+                content: '',
+                complete: 0,
+            },
             tags: tags,
-            content: '',
             fetching: state.articles.isFetching,
             active: state.tags.isFetching,
             tagsSelected: [],
@@ -241,4 +262,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, { addTag, saveArticle, fetchTags })(Edit);
+export default connect(mapStateToProps, { addTag, saveArticle, fetchTags, editArticle })(Edit);
