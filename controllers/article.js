@@ -5,23 +5,25 @@ mongoose.Promise = global.Promise;
 
 // 获取文章列表
 exports.list = async function(ctx, next) {
-    let count = 0;
-    let articles = [];
-    let { pageNum = 3, pageSize = 10 } = ctx.query;
-    let start = pageSize * (page - 1);
+    let { pageNum = 1, pageSize = 20 } = ctx.query;
+    let start = pageSize * (pageNum - 1);
     let queryCount = Article.count();
     let query = Article
                     .find()
+                    .populate('tags', 'tag')
                     .skip(start)
                     .limit(+pageSize)
                     .sort({update_at: -1})
                     .select('title content tags update_at');
 
     
+    let total = 0;
+    let list = null;
     try {
         let data = await Promise.all([queryCount.exec(), query.exec()]);
         total = data[0];
         list = data[1];
+
     } catch(err) {
         ctx.body = {
             code: 1,
@@ -35,8 +37,8 @@ exports.list = async function(ctx, next) {
         code: 0,
         msg: 'success',
         data: {
-            pageNum,
-            pageSize,
+            pageNum: parseInt(pageNum, 10),
+            pageSize: parseInt(pageSize, 10),
             list,
             total
         }
