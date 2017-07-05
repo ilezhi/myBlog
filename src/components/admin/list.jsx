@@ -26,7 +26,10 @@ class ArticleList extends Component {
         this.state = {
             pageNum: 1,
             pageSize: 20,
-            fetched: false
+            fetched: false,
+            showDialog: false,
+            title: '',
+            id: '',
         };
     }
 
@@ -57,9 +60,21 @@ class ArticleList extends Component {
                     {this.state.fetched && this.props.list.length === 0 ? <p>还没写过文章</p> : false}
                     {this.props.isFetching ? <ProgressBar type='circular' mode='indeterminate' /> : false}
                 </div>
+                <Dialog
+                    actions={this.actions}
+                    active={this.state.showDialog}
+                    onOverlayClick={this.cancelDialog}
+                    title='确认删除文章'>
+                    <p>{this.state.title}</p>
+                </Dialog>
             </div>
         );
     }
+
+    actions = [
+        { label: '取消', onClick: this.cancelDialog.bind(this) },
+        { label: '删除', onClick: this.ensureDelArticle.bind(this) }
+    ]
 
     
     /**
@@ -81,7 +96,7 @@ class ArticleList extends Component {
                     caption={article.title} 
                     rightActions={[
                         <TooltipButton tooltip='编辑' key={i} onClick={this.editArticle.bind(this, id)} icon='edit' />,
-                        <TooltipButton tooltip='删除' key={i} onClick={this.delArticle.bind(this, id)} icon='delete' />
+                        <TooltipButton tooltip='删除' key={i} onClick={this.delArticle.bind(this, id, article.title)} icon='delete' />
                 ]} />
             )
         });
@@ -103,9 +118,29 @@ class ArticleList extends Component {
     }
 
     // 删除文章
-    delArticle(id) {
+    delArticle(id, title) {
         event.stopPropagation();
-        console.log(id);
+        this.setState({
+            ...this.state,
+            showDialog: true,
+            id,
+            title,
+        })
+    }
+
+    async ensureDelArticle() {
+        let res = await this.props.delArticleById(this.state.id);
+        this.cancelDialog();
+    }
+
+    /**
+     * 关闭对话框
+     */
+    cancelDialog() {
+        this.setState({
+            ...this.state,
+            showDialog: false
+        });
     }
 }
 

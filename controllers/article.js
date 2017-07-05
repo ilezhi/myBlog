@@ -138,11 +138,27 @@ exports.edit = async function(ctx, next) {
 
 // 删除文章
 exports.del = async function(ctx, next) {
-    var id = ctx.request.body.id;
-    console.log(id);
-    ctx.body = {
-        code: 0,
-        msg: 'success',
-        data: id
-    };
+    let id = ctx.request.body.id;
+    
+    if (!id) {
+        return ctx.body = {
+            code: 1,
+            msg: 'id不能为空'
+        };
+    }
+
+    try {
+        await Article.findByIdAndRemove({_id: id}).exec();
+        return ctx.body = {
+            code: 0,
+            msg: 'success',
+            data: { id }
+        };
+    } catch (err) {
+        ctx.body = {
+            code: 1,
+            msg: err.message
+        };
+    }
+  
 };
