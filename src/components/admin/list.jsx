@@ -6,125 +6,116 @@ import Dialog from 'react-toolbox/lib/dialog';
 import FontIcon from 'react-toolbox/lib/font_icon';
 import { Button, IconButton } from 'react-toolbox/lib/button';
 import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list';
+import Tooltip from 'react-toolbox/lib/tooltip';
+import ProgressBar from 'react-toolbox/lib/progress_bar';
 
 import styles from '../../styles/site';
 import { fetchArticles, delArticleById } from '../../actions/article';
 
+
+const TooltipButton = Tooltip(IconButton);
+
 class ArticleList extends Component {
+    /**
+     * 组件初始化时，判断文章数据是从props中来，还是需要请求数据
+     * 1 如果list.length === 0, 则请求文章数据
+     * 2 list.length !== 0   
+     */
     constructor(props) {
         super(props);
         this.state = {
-            id: '',
-            active: false,
-            title: ''
+            pageNum: 1,
+            pageSize: 20,
+            fetched: false
         };
     }
 
-    componentDidMount() {
-        
+    async componentDidMount() {
         let { list, fetchArticles } = this.props;
-        if (!list || list.length === 0) {
-            fetchArticles({
-                page: 1,
-                pageSize: 10
-            });
+        // 1 进入此页面,2 在此页面刷新
+        if (list.length === 0) {
+            let res = await fetchArticles({pageNum: 1, pageSize: 20});
+            // 成功请求后标识出, 用于区别没有文章还是首次加载
+            if (res.type.includes('SUCCESS')) {
+                this.setState({
+                    ...this.state,
+                    fetched: true
+                });
+            }
         }
     }
 
     render() {
-        let { list, page, pageSize, count } = this.props;
 
         return (
             <div>
-                <div style={{padding: '10px'}}>
-                    <Link to="/admin/article/create" icon="create" >
-                        <FontIcon value="create" />
-                    </Link>
-                </div>
+                <aside className={styles.createArticle}>
+                    <Link to='/admin/article/create'><Button raised><FontIcon value="edit" /> 新增</Button></Link>
+                </aside>
                 <div>
-                    {typeof list === 'undefined' ? (<div>暂时没有文章</div>) : this.renderArticles(list)}
+                    {this.renderArticles(this.props.list)}
+                    {this.state.fetched && this.props.list.length === 0 ? <p>还没写过文章</p> : false}
+                    {this.props.isFetching ? <ProgressBar type='circular' mode='indeterminate' /> : false}
                 </div>
-                <Dialog
-                    actions={this.actions}
-                    active={this.state.active}
-                    title="删除确认">
-                    <p>确认删除文章《{this.state.title}》</p>
-                </Dialog>
             </div>
         );
     }
 
-    actions = [
-        { label: '取消', onClick: this.closeDialog.bind(this)},
-        { label: '确认', onClick: this.delArticle.bind(this)}
-    ];
-
-
+    
+    /**
+     * 显示文章列表
+     */
     renderArticles(articles) {
-        let articleItem = articles.map((article, i) => {
-            let {id, title} = article;
+        let len = articles.length;
+        if (len === 0) {
+            return false;
+        }
 
+        let nodes = articles.map((article, i) => {
+            let id = article._id;
             return (
-                <ListItem className={styles.articleItem} key={i} caption={title} onClick={this.checkDetailOfArticle.bind(this, id)}
-                    rightActions={[<Link key={i} to={`/admin/article/edit/${id}`} icon="edit"><FontIcon value="edit" /></Link>, <IconButton onClick={this.openDialog.bind(this, id)} key={i} icon="delete" />]} />
-            );
+                <ListItem
+                    key={i}
+                    className={styles.bb}
+                    onClick={this.checkArticle.bind(this, id)} 
+                    caption={article.title} 
+                    rightActions={[
+                        <TooltipButton tooltip='编辑' key={i} onClick={this.editArticle.bind(this, id)} icon='edit' />,
+                        <TooltipButton tooltip='删除' key={i} onClick={this.delArticle.bind(this, id)} icon='delete' />
+                ]} />
+            )
         });
 
-
         return (
-            <List ripple selectable className={styles.articleWrap}>
-                {articleItem}
-            </List>
+            <List>{nodes}</List>
         );
     }
 
-    checkDetailOfArticle(id) {
+    // 查看文章详情
+    checkArticle(id) {
         console.log(id);
-        // alert('查看文章详情');
-        // browserHistory.push(`/admin/article/`);
     }
 
-    // 打开删除文章确认窗口
-    openDialog(id) {
-        let title = '';
-        let { list: articles } = this.props;
-        for (let i = 0; i < articles.length; i++) {
-            if (articles[i].id === id) {
-                title = articles[i].title;
-                break;
-            }
-        }
-        
-        this.setState({
-            id,
-            active: true,
-            title
-        });
+    // 编辑文章
+    editArticle(id) {
+        event.stopPropagation();
+        console.log(id);
     }
 
     // 删除文章
-    delArticle() {
-        let id = this.state.id;
+    delArticle(id) {
+        event.stopPropagation();
         console.log(id);
-        this.props.delArticleById(id);
-        this.setState({
-            ...this.state,
-            active: false
-        });
-    }
-
-    // 取消删除文章确认窗口
-    closeDialog() {
-        this.setState({
-            active: false,
-            title: '',
-            id: ''
-        });
     }
 }
 
+/**
+ * isFetching, message, pagination, list
+ */
 const mapStateToProps = state => {
-    return { ...state.articles };
+    return {
+        ...state.articles
+     };
 }
 
 export default connect(mapStateToProps, { fetchArticles, delArticleById })(ArticleList);
