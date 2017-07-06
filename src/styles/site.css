@@ -1,7 +1,30 @@
 body {
     background: #f4f4f4;
     font-size: 16px;
+    color: #666;
 }
+
+ul, 
+ol {
+    padding: 0;
+    margin: 0;
+}
+
+ul, ol {
+    list-style: none;
+}
+
+:global(.pull-right) {
+    float: right;
+}
+:global(.pointer) {
+    cursor: pointer;
+}
+
+div[data-react-toolbox="chip"] {
+    line-height: 22px;
+}
+
 .wrap {
     display: flex;
     min-height: 100vh;
@@ -135,4 +158,22 @@ body {
 
 .bb {
     border-bottom: 1px solid #eee;
+}
+
+.info {
+    font-size: 12px;
+    padding: 0.1rem 0;
+}
+
+.info li {
+    display: inline-block;
+
+    & + li {
+        margin: 0 0 0 10px;
+    }
+}
+
+.info li > span {
+    font-size: 16px;
+    vertical-align: text-bottom;
 }

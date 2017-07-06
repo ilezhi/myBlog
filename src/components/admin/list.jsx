@@ -34,18 +34,18 @@ class ArticleList extends Component {
     }
 
     async componentDidMount() {
-        let { list, fetchArticles } = this.props;
-        // 1 进入此页面,2 在此页面刷新
-        if (list.length === 0) {
-            let res = await fetchArticles({pageNum: 1, pageSize: 20});
-            // 成功请求后标识出, 用于区别没有文章还是首次加载
-            if (res.type.includes('SUCCESS')) {
-                this.setState({
-                    ...this.state,
-                    fetched: true
-                });
-            }
-        }
+        // let { list, fetchArticles } = this.props;
+        // // 1 进入此页面,2 在此页面刷新
+        // if (list.length === 0) {
+        //     let res = await fetchArticles({pageNum: 1, pageSize: 20});
+        //     // 成功请求后标识出, 用于区别没有文章还是首次加载
+        //     if (res.type.includes('SUCCESS')) {
+        //         this.setState({
+        //             ...this.state,
+        //             fetched: true
+        //         });
+        //     }
+        // }
     }
 
     render() {
@@ -57,7 +57,7 @@ class ArticleList extends Component {
                 </aside>
                 <div>
                     {this.renderArticles(this.props.list)}
-                    {this.state.fetched && this.props.list.length === 0 ? <p>还没写过文章</p> : false}
+                    {!this.props.isFetching && this.props.list.length === 0 ? <p>还没写过文章</p> : false}
                     {this.props.isFetching ? <ProgressBar type='circular' mode='indeterminate' /> : false}
                 </div>
                 <Dialog
@@ -108,7 +108,7 @@ class ArticleList extends Component {
 
     // 查看文章详情
     checkArticle(id) {
-        console.log(id);
+        browserHistory.push(`/admin/article/${id}`);
     }
 
     // 编辑文章

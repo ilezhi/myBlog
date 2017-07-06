@@ -9,7 +9,7 @@ import ProgressBar from 'react-toolbox/lib/progress_bar';
 import cs from 'classnames';
 
 import fetchData from '../../assets/js/fetch';
-import { addTag, fetchTags } from '../../actions/tag';
+import { addTag, } from '../../actions/tag';
 import { saveArticle, editArticle } from '../../actions/article';
 import styles from '../../styles/site';
 
@@ -39,14 +39,23 @@ class Edit extends Component {
     }
     
     async componentDidMount() {
-        // 获取标签列表
-        if (!('_id' in this.props.tags)) {
-            this.props.fetchTags();
-        }
-
         // 初始化markdown编辑器
         md = new Editor();
         md.render();
+    }
+
+    componentWillReceiveProps(props) {
+        let { article, tagsSelected, mode } = props;
+
+        if (mode === 1 && article.title) {
+            md.codemirror.setValue(article.content);
+            this.setState({
+                ...this.state,
+                tagsSelected,
+                title: article.title,
+                content: article.content
+            });
+        }
     }
 
     render() {
@@ -203,63 +212,61 @@ class Edit extends Component {
 
 
 const mapStateToProps = state => {
-    let pathname = state.routing.locationBeforeTransitions.pathname.substring(1).split('\/');
-    let mode = pathname[2];
+    let {articles, tags} = state;
+    let pathname = state.routing.locationBeforeTransitions.pathname.split('\/');
+    let type = pathname[3];
 
-    let tags = {};
+    let tagsList = {};
 
-    if (state.tags.list.length > 0) {
-        // 将tag提取称字符串数组
-        state.tags.list.forEach(item => {
-            tags[item._id] = item.tag
-        });
-    }
+    tags.list.forEach(tag => {
+        tagsList[tag._id] = tag.tag;
+    });
 
-    // 编辑
-    if (mode === 'edit') {
-        let id = pathname[3];
-        let data = null;
-        let articles = state.articles.list;
-
-        // 查询所属id文章
-        for (let i = 0; i < articles.length; i++) {
-            if (articles[i]._id === id) {
-                data = articles[i];
-                break;
-            }
-        }
-
-        // 获取已选标签id数组
-        let tagData = data.tags.map(tag => {
-            return tag._id;
-        });
-
-        return {
-            article: data,                          
-            tags: tags,                             // 所有标签
-            fetching: state.articles.isFetching,    // 文章请求状态
-            active: state.tags.isFetching,          // 标签请求状态
-            tagsSelected: tagData,                  // 文章已有标签
-            mode: 1,                                // 编辑模式
-            message: state.tags.message,            // 标签返回信息
-        };
-    } else {
+    // 新增
+    if (type === 'create') {
         return {
             article: {
                 title: '',
-                tags: [],
-                content: '',
-                complete: 0,
+                content: ''
             },
-            tags: tags,
-            fetching: state.articles.isFetching,
-            active: state.tags.isFetching,
+            tags: tagsList,
+            fetching: articles.isFetching,
+            active: tags.isFetching,
             tagsSelected: [],
             mode: 0,
-            message: state.tags.message,
-            
         };
+    }
+
+    // 编辑
+    let article = {
+        title: '',
+        content: ''
+    };
+
+    let list = articles.list;
+    let tagsSelected = [];
+    let id = pathname[4]
+    if (list.length !== 0) {
+        for (let i = 0; i < list.length; i++) {
+            if (list[i]._id === id) {
+                article.title = list[i].title;
+                tagsSelected = list[i].tags;
+                article.content = list[i].content;
+                break;
+            }
+        }
+    }
+
+    article._id = id;
+
+    return {
+        article,
+        tags: tagsList,
+        fetching: articles.isFetching,
+        active: tags.isFetching,
+        tagsSelected,
+        mode: 1,
     }
 };
 
-export default connect(mapStateToProps, { addTag, saveArticle, fetchTags, editArticle })(Edit);
+export default connect(mapStateToProps, { addTag, saveArticle, editArticle })(Edit);

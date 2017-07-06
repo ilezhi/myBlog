@@ -14,6 +14,12 @@ const editArticle = (location, cb) => {
     }, 'editarticle');
 };
 
+const detailArticle = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('../components/admin/detail').default);
+    }, 'detailArticle')
+}
+
 const routes = (
     <Route path="/" component={App}>
         <IndexRoute component={Home} />
@@ -22,6 +28,7 @@ const routes = (
             <IndexRoute component={List} />
             <Route path="edit/:id" getComponent={editArticle} />
             <Route path="create" getComponent={editArticle} />
+            <Route path=":id" getComponent={detailArticle} />
         </Route>
     </Route>
 );

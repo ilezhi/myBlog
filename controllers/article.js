@@ -10,7 +10,6 @@ exports.list = async function(ctx, next) {
     let queryCount = Article.count();
     let query = Article
                     .find()
-                    .populate('tags', 'tag')
                     .skip(start)
                     .limit(+pageSize)
                     .sort({update_at: -1})
@@ -51,7 +50,7 @@ exports.list = async function(ctx, next) {
  * @return {code, msg, data: { _id, title, tags, content, createdAt, updatedAt}}
  */
 exports.save = async function(ctx, next) {
-    var { title, tags, content } = ctx.request.body;
+    let { title, tags, content } = ctx.request.body;
 
     let msg = '';
 
@@ -71,21 +70,21 @@ exports.save = async function(ctx, next) {
     }
 
 
-    var article = new Article({title, tags, content});
+    let model = new Article({title, tags, content});
     try {
-        var newArticle = await article.save();
+        let article = await model.save();
+
+        return ctx.body = {
+            code: 0,
+            msg: 'success',
+            data: article
+        };
     } catch (err) {
         return ctx.body = {
             code: 1,
             msg: 'fail to create article'
         };
     }
-
-    return ctx.body = {
-        code: 0,
-        msg: 'success',
-        data: newArticle
-    };
 };
 
 
@@ -120,7 +119,6 @@ exports.edit = async function(ctx, next) {
         await Article.findByIdAndUpdate({_id: id}, update).exec();
         let query = Article.findById({_id: id});
         let a = await query.exec();
-        delete a._v;
         return ctx.body = {
             code: 0,
             msg: 'success',
