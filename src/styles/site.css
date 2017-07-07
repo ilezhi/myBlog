@@ -74,12 +74,6 @@ div[data-react-toolbox="chip"] span + span {
     padding: 0.16rem 0 0 0.1rem;
 }
 
-@media screen and (max-width: 760px) {
-    .tagswrap {
-        display: none;
-    }
-}
-
 .bottomLine > div {
     vertical-align: bottom;
 }
@@ -210,3 +204,25 @@ div[data-react-toolbox="chip"] span + span {
     border-radius: 4px;
     padding: 0.1rem;
 }
+
+.loginWrap {
+    width: 4.5rem;
+    margin: 0 auto;
+}
+
+.loginBtn {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+}
+
+@media screen and (max-width: 760px) {
+    .tagswrap {
+        display: none;
+    }
+
+    .loginWrap {
+        width: 100%;
+    }
+}
+

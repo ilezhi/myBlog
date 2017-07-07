@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 
-class Articles extends Component {
+class User extends Component {
     render() {
         return (
             <div>{this.props.children}</div>
@@ -10,4 +10,4 @@ class Articles extends Component {
 }
 
 
-export default Articles;
+export default User;
