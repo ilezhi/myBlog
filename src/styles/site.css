@@ -4,16 +4,6 @@ body {
     color: #666;
 }
 
-ul, 
-ol {
-    padding: 0;
-    margin: 0;
-}
-
-ul, ol {
-    list-style: none;
-}
-
 :global(.pull-right) {
     float: right;
 }
@@ -23,6 +13,10 @@ ul, ol {
 
 div[data-react-toolbox="chip"] {
     line-height: 22px;
+}
+
+div[data-react-toolbox="chip"] span + span {
+    margin: 0;
 }
 
 .wrap {
@@ -71,6 +65,10 @@ div[data-react-toolbox="chip"] {
     padding: 0.16rem 0;
 }
 
+.articleList > div {
+    margin: 0 0 0.2rem;
+}
+
 .tagswrap {
     width: 2.5rem;
     padding: 0.16rem 0 0 0.1rem;
@@ -92,15 +90,11 @@ div[data-react-toolbox="chip"] {
 
 .datetime {
     padding: 0.05rem 0 0;
-
-    & > p {
-        display: inline-block;
-        margin: 0 0.1rem 0 0;
-    }
 }
 
-.article p {
-    font-size: 18px;
+.datetime > p {
+    display: inline-block;
+    margin: 0 0.1rem 0 0;
 }
 
 .wh {
@@ -134,9 +128,9 @@ div[data-react-toolbox="chip"] {
     background: rgba(0,0,0,0.4);
     display: none;
     text-align: center;
-    & > div {
-        margin-top: 20%;
-    }
+}
+.fullMask > div {
+    margin-top: 20%;
 }
 
 .articleWrap {
@@ -167,13 +161,52 @@ div[data-react-toolbox="chip"] {
 
 .info li {
     display: inline-block;
+}
 
-    & + li {
-        margin: 0 0 0 10px;
-    }
+.info li + li {
+    margin: 0 0 0 10px;
 }
 
 .info li > span {
     font-size: 16px;
     vertical-align: text-bottom;
+}
+
+/**
+ * markdown样式
+ */
+
+.articleDetail .article {
+    padding: 0.2rem 0;
+    overflow: hidden;
+}
+
+.articleDetail > h1 {
+    margin: 0 0 0.16rem;
+}
+
+.article p {
+    font-size: 0.16rem;
+    margin: 0 0 0.2rem;
+    line-height: 24px;
+}
+
+.article h1,
+.article h2,
+.article h3,
+.article h4 {
+    margin: 0 0 0.2rem;
+    font-weight: 500;
+}
+
+.article p code {
+    background: #D6DBDF;
+    border-radius: 4px;
+    padding: 0 2px;
+}
+
+.article pre {
+    background: #D6DBDF;
+    border-radius: 4px;
+    padding: 0.1rem;
 }

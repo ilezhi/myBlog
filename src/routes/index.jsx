@@ -24,6 +24,7 @@ const routes = (
     <Route path="/" component={App}>
         <IndexRoute component={Home} />
         <Route path="article" component={Home} />
+        <Route path="article/:id" getComponent={detailArticle} />
         <Route path="admin/article" component={Article}>
             <IndexRoute component={List} />
             <Route path="edit/:id" getComponent={editArticle} />

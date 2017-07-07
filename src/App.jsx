@@ -34,7 +34,7 @@ class App extends Component {
             <div className={styles.wrap}>
                 <header className={styles.header}>
                     <div className={styles.center}>
-                        <span>Weels's blog</span>
+                        <span>weels's blog</span>
                     </div>
                 </header>
                 <div className={styles.main}>

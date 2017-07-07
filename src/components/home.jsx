@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Link } from 'react-router';
 import styles from '../styles/site';
 import { Card, CardMedia, CardTitle, CardText, CardActions } from 'react-toolbox/lib/card';
@@ -6,54 +7,61 @@ import {Button} from 'react-toolbox/lib/button';
 import Chip from 'react-toolbox/lib/chip';
 
 import TagList from './common/taglist';
+import Info from './common/info';
+import TagChip from './common/tagchip';
 
-const { homewrap, articleList, bottomLine, tagbar, datetime, article } = styles;
-
-export default class Home extends Component {
-    static defaultProps = {
-        tags: ['javascript', 'web'],
-        createdAt: '2017-05-09 14:37:19',
-        updatedAt: '2017-05-09 14:38:20'
-    };
+// const { homewrap, articleList, bottomLine, tagbar, datetime, article } = styles;
+class Home extends Component {
+    // static defaultProps = {
+    //     tags: ['javascript', 'web'],
+    //     createdAt: '2017-05-09 14:37:19',
+    //     updatedAt: '2017-05-09 14:38:20'
+    // };
     
     render() {
+        let { articles, tags } = this.props;
         return (
             <div className={styles.homewrap}>
-                <div className={articleList}>
+                <div className={styles.articleList}>
                     {/*<span>博文列表</span>*/}
-                    <div>
-                        <Card>
-                            <CardTitle title='Javascript 最佳实践' subtitle={this.renderTagsAndDate()} />
-                            <CardText className={article}>{'今天我们来谈一谈javascript中常用的数组方法'}</CardText>
-                            <CardActions>
-                                <Button label='阅读更多'></Button>
-                                <Link to='/article/edit/1' >编辑</Link>
-                            </CardActions>
-                        </Card>
-                    </div>
+                    {this.renderArticleList(articles.list, tags.list)}
                 </div>
-                <TagList />
             </div>
         );
     }
 
-    renderTagsAndDate = () => {
-        let tags = this.props.tags.map((tag, i) => {
+    /**
+     * 显示文章列表
+     * @param {[]} articles 
+     * @param {[]} tags
+     * @returns {[component]} 
+     */
+    renderArticleList(articles, tags) {
+        if (articles.length === 0) {
+            return (<p>没有文章</p>);
+        }
+
+        return articles.map((article, i) => {
+            let { title, content, tags: tagsId, _id, ...left} = article;
+            let html = content.length > 200 ? marked(content.substr(0, 200) + '...') : marked(content);
             return (
-                <Chip key={i}><span>{tag}</span></Chip>
-            )
+                <Card key={i}>
+                    <CardTitle title={title} children={[<Info key={i + 'info'} {...left} />, <TagChip key={i + 'tag'} tagsId={tagsId} tags={tags} />]} />
+                    <CardText className={styles.article} dangerouslySetInnerHTML={{__html: html}} />
+                    <CardActions>
+                        <Link to={`/article/${_id}`}>阅读更多 &raquo;</Link>
+                    </CardActions>
+                </Card>
+            );
         });
-        return (
-            <div className={tagbar}>
-                <div className={bottomLine}>
-                    <span>标签：</span>
-                    {tags}
-                </div>
-                <div className={datetime}>
-                    <p>created: <span>{this.props.createdAt}</span></p>
-                    <p>updated: <span>{this.props.updatedAt}</span></p>
-                </div>
-            </div>
-        );
     }
 }
+
+const mapStateToProps = state => {
+    return {
+        articles: state.articles,
+        tags: state.tags
+    };
+};
+
+export default connect(mapStateToProps)(Home);
