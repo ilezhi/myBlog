@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { browserHistory } from 'react-router';
+import { browserHistory, withRouter } from 'react-router';
 import Input from 'react-toolbox/lib/input';
 import Autocomplete from 'react-toolbox/lib/autocomplete';
 import { Button } from 'react-toolbox/lib/button';
@@ -25,8 +25,8 @@ import {
 
 let md = null;
 class Edit extends Component {
-    constructor(props) {
-        super(props);
+    constructor(props, context) {
+        super(props, context);
 
         let { title, content, } = props.article;
         this.state = {
@@ -35,13 +35,24 @@ class Edit extends Component {
             tagsSelected: props.tagsSelected,
             message: '',
             active: false,
+            editing: true,
         };
     }
     
-    async componentDidMount() {
+    componentDidMount() {
         // 初始化markdown编辑器
         md = new Editor();
         md.render();
+        this.props.router.setRouteLeaveHook(
+            this.props.route,
+            this.routerWillLeave
+        );
+    }
+
+    routerWillLeave = () => {
+        if (this.state.editing) {
+            return '当前为编辑状态，确定要离开么？';
+        }
     }
 
     componentWillReceiveProps(props) {
@@ -190,13 +201,14 @@ class Edit extends Component {
                     content: '',
                     tagsSelected: [],
                     active,
-                    message
+                    message,
+                    editing: false
                 });
 
                 // TODO: 保存成功跳到文章列表页
                 setTimeout(() => {
                     browserHistory.push('/admin/article');
-                }, 1500);
+                }, 1000);
             }
         } catch (err) {
             active = true;
@@ -269,4 +281,4 @@ const mapStateToProps = state => {
     }
 };
 
-export default connect(mapStateToProps, { addTag, saveArticle, editArticle })(Edit);
+export default withRouter(connect(mapStateToProps, { addTag, saveArticle, editArticle })(Edit));
