@@ -6,6 +6,11 @@ import styles from './styles/site';
 import { fetchArticles } from './actions/article';
 import { fetchTags } from './actions/tag';
 import { addUserInfo, signout } from './actions/user';
+import FontIcon from 'react-toolbox/lib/font_icon';
+import Tooltip from 'react-toolbox/lib/tooltip';
+
+
+const TooltipIcon = Tooltip(FontIcon);
 
 /**
  * 所有组件的父组件
@@ -44,7 +49,9 @@ class App extends Component {
                 <header className={styles.header}>
                     <div className={styles.center}>
                         <span>weels's blog</span>
-                        {this.props.userInfo._id ? <a className='pull-right' onClick={this.signout} href="javascript:;">登出</a> : false}
+                        {this.props.userInfo._id 
+                            ? <a className='pull-right' onClick={this.signout} href="javascript:;"><TooltipIcon tooltip='登出' value='power_settings_new' /></a> 
+                            : false}
                     </div>
                 </header>
                 <div className={styles.main}>
