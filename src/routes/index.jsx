@@ -24,7 +24,13 @@ const Login = (location, cb) => {
     require.ensure([], require => {
         cb(null, require('../components/admin/login').default);
     }, 'login');
-}
+};
+
+const Profile = (location, cb) => {
+    require.ensure([], require => {
+        cb(null, require('../components/admin/profile').default);
+    }, 'profile');
+};
 
 const Auth = (params, replace) => {
     let userInfo = sessionStorage.getItem('userInfo');
@@ -38,8 +44,10 @@ const routes = (
         <IndexRoute component={Home} />
         <Route path="article" component={Home} />
         <Route path="article/:id" getComponent={detailArticle} />
-        <Route path="admin/article" component={User} onEnter={Auth}>
+        <Route path="admin" component={User} onEnter={Auth}>
             <IndexRoute component={List} />
+            <Route path="article" component={List} />
+            <Route path="profile" getComponent={Profile} />
             <Route path="edit/:id" getComponent={editArticle} />
             <Route path="create" getComponent={editArticle} />
             <Route path=":id" getComponent={detailArticle} />
