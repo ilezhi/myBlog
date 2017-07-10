@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { browserHistory } from 'react-router';
 import { Button } from 'react-toolbox/lib/button';
 import styles from './styles/site';
 import { fetchArticles } from './actions/article';
 import { fetchTags } from './actions/tag';
-import { addUserInfo } from './actions/user';
+import { addUserInfo, signout } from './actions/user';
 
 /**
  * 所有组件的父组件
@@ -61,18 +62,11 @@ class App extends Component {
     }
 
     signout = async() => {
-        let res = await fetch('/api/signout', {
-            method: 'POST',
-            headers: {
-                'Accept'      : 'application/json',
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-        });
-
-        let data = await res.json();
-        console.log(data);
-        sessionStorage.removeItem('userInfo');
+        let res = await this.props.signout();
+        if (res.type.includes('SUCCESS')) {
+            sessionStorage.removeItem('userInfo');
+            browserHistory.push('/admin/login');
+        }
     }
 }
 
@@ -82,4 +76,4 @@ const mapStateToProps = state => {
     };
 }
 
-export default connect(mapStateToProps, {fetchArticles, fetchTags, addUserInfo})(App);
+export default connect(mapStateToProps, {fetchArticles, fetchTags, addUserInfo, signout})(App);

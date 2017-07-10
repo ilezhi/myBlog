@@ -37,7 +37,7 @@ export const addUserInfo = (params) => {
 export const signout = () => {
     return async dispatch => {
         try {
-            let resp = await fetch('/api/signout');
+            let resp = await fetch('/api/signout', 'POST');
             if (resp.status !== 200) {
                 throw new Error(resp.statusText);
             }

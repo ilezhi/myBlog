@@ -1,4 +1,4 @@
-export default (type = 'GET', url = '', data = {}) => {
+export default (url = '', type = 'GET', data = {}) => {
     type = type.toUpperCase();
 
     if (type === 'GET') {

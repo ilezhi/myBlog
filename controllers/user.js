@@ -42,7 +42,7 @@ exports.signin = async (ctx, next) => {
 exports.signout = async(ctx, next) => {
     ctx.session = null;
     return ctx.body = {
-        code: 1,
+        code: 0,
         msg: '退出成功'
     };
 };
