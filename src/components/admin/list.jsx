@@ -34,18 +34,7 @@ class ArticleList extends Component {
     }
 
     async componentDidMount() {
-        // let { list, fetchArticles } = this.props;
-        // // 1 进入此页面,2 在此页面刷新
-        // if (list.length === 0) {
-        //     let res = await fetchArticles({pageNum: 1, pageSize: 20});
-        //     // 成功请求后标识出, 用于区别没有文章还是首次加载
-        //     if (res.type.includes('SUCCESS')) {
-        //         this.setState({
-        //             ...this.state,
-        //             fetched: true
-        //         });
-        //     }
-        // }
+        
     }
 
     render() {

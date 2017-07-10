@@ -6,6 +6,7 @@ const json = require('koa-json');
 const onerror = require('koa-onerror');
 const Bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
+const session = require('koa-session2');
 
 require('./models');
 
@@ -20,6 +21,9 @@ app.use(convert(bodyparser));
 app.use(convert(json()));
 app.use(convert(logger()));
 app.use(require('koa-static')(__dirname + '/assets'));
+app.use(session({
+  key: 'weelsblog'
+}));
 
 app.use(views(__dirname + '/views'), {
   map: {

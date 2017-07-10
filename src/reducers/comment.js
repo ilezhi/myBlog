@@ -33,7 +33,7 @@ const message = (state = {}, action) => {
         case SAVE_COMMENT_FAILURE:
             return {
                 type: 'error',
-                text: action.data.msg
+                text: action.message
             };
         
         default:

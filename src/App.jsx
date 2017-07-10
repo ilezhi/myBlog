@@ -4,6 +4,7 @@ import { Button } from 'react-toolbox/lib/button';
 import styles from './styles/site';
 import { fetchArticles } from './actions/article';
 import { fetchTags } from './actions/tag';
+import { addUserInfo } from './actions/user';
 
 /**
  * 所有组件的父组件
@@ -26,7 +27,14 @@ class App extends Component {
             this.props.fetchTags()
         ]);
 
-        console.log('mounted app');
+        try {
+            let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
+            if (userInfo) {
+                this.props.addUserInfo(userInfo);
+            }
+        } catch (err) {
+            console.log(err.message);
+        }
     }
 
     render() {
@@ -35,6 +43,7 @@ class App extends Component {
                 <header className={styles.header}>
                     <div className={styles.center}>
                         <span>weels's blog</span>
+                        {this.props.userInfo._id ? <a className='pull-right' onClick={this.signout} href="javascript:;">登出</a> : false}
                     </div>
                 </header>
                 <div className={styles.main}>
@@ -50,10 +59,27 @@ class App extends Component {
             </div>
         );
     }
+
+    signout = async() => {
+        let res = await fetch('/api/signout', {
+            method: 'POST',
+            headers: {
+                'Accept'      : 'application/json',
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include',
+        });
+
+        let data = await res.json();
+        console.log(data);
+        sessionStorage.removeItem('userInfo');
+    }
 }
 
 const mapStateToProps = state => {
-    return {};
+    return {
+        userInfo: state.user.info
+    };
 }
 
-export default connect(mapStateToProps, {fetchArticles, fetchTags})(App);
+export default connect(mapStateToProps, {fetchArticles, fetchTags, addUserInfo})(App);

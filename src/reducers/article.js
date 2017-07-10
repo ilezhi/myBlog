@@ -57,7 +57,7 @@ const message = (state = {}, action) => {
         case DEL_ARTICLE_FAILURE:
             return {
                 type: 'error',
-                message: action.data.msg
+                message: action.message
             };
 
         default:

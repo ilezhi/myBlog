@@ -22,7 +22,8 @@ export default store => next => action => {
         method: type,
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        credentials: 'include',
     }
 
     if (type.toUpperCase() === 'GET' && data) {

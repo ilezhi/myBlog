@@ -26,12 +26,19 @@ const Login = (location, cb) => {
     }, 'login');
 }
 
+const Auth = (params, replace) => {
+    let userInfo = sessionStorage.getItem('userInfo');
+    if (!userInfo) {
+        replace('/admin/login');
+    }
+};
+
 const routes = (
     <Route path="/" component={App}>
         <IndexRoute component={Home} />
         <Route path="article" component={Home} />
         <Route path="article/:id" getComponent={detailArticle} />
-        <Route path="admin/article" component={User}>
+        <Route path="admin/article" component={User} onEnter={Auth}>
             <IndexRoute component={List} />
             <Route path="edit/:id" getComponent={editArticle} />
             <Route path="create" getComponent={editArticle} />
