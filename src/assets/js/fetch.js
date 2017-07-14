@@ -1,7 +1,7 @@
 export default (url = '', type = 'GET', data = {}) => {
     type = type.toUpperCase();
 
-    if (type === 'GET') {
+    if (type === 'GET' && data) {
         const keys = Object.keys(data);
         if (keys.length !== 0) {
             let queryStr = keys.map(key => {

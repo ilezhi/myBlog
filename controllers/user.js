@@ -16,7 +16,6 @@ exports.signin = async (ctx, next) => {
 
     try {
         let user = await User.findOne({loginname}).exec();
-        console.log(user);
         if (!user) {
             return ctx.body = {
                 code: 1,
