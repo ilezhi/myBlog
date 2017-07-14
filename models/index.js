@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const config = require('../config');
 const logger = require('../common/logger');
+const pwd = require('../common/securepass');
 
 mongoose.connect(config.db, {
     server: { poolSize: 20 }
@@ -13,12 +14,16 @@ mongoose.connect(config.db, {
 
     // 初始化时注册默认用户
     var userModel = mongoose.model('User');
-    userModel.findOne(function(err, user) {
+    userModel.findOne(async(err, user) => {
         if (!user) {
             var user = new userModel();
             user.loginname = config.loginname;
-            user.pass = config.pass;
-            user.save();
+            try {
+                user.pass = await pwd.encrypt(config.pass);
+                user.save();
+            } catch (err) {
+                logger.error('encrypt pass error', err.message);
+            }
         }
     });
 });

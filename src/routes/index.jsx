@@ -32,10 +32,12 @@ const Profile = (location, cb) => {
     }, 'profile');
 };
 
-const Auth = (params, replace) => {
+const Auth = function(params, replace) {
     let userInfo = sessionStorage.getItem('userInfo');
-    if (!userInfo) {
-        replace('/admin/login');
+    let pathname = window.location.pathname;
+    const loginPath = '/admin/login';
+    if (!userInfo && loginPath !== pathname) {
+        replace(loginPath);
     }
 };
 
@@ -46,13 +48,13 @@ const routes = (
         <Route path="article/:id" getComponent={detailArticle} />
         <Route path="admin" component={User} onEnter={Auth}>
             <IndexRoute component={List} />
+            <Route path="login" getComponent={Login} />
             <Route path="article" component={List} />
             <Route path="profile" getComponent={Profile} />
-            <Route path="edit/:id" getComponent={editArticle} />
-            <Route path="create" getComponent={editArticle} />
-            <Route path=":id" getComponent={detailArticle} />
+            <Route path="article/edit/:id" getComponent={editArticle} />
+            <Route path="article/create" getComponent={editArticle} />
+            <Route path="article/:id" getComponent={detailArticle} />
         </Route>
-        <Route path="/admin/login" getComponent={Login} />
     </Route>
 );
 

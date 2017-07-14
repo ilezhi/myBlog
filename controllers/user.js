@@ -1,5 +1,6 @@
 const User = require('../models').User;
 const mongoose = require('mongoose');
+const pwd = require('../common/securepass');
 
 mongoose.Promise = global.Promise;
 
@@ -14,12 +15,20 @@ exports.signin = async (ctx, next) => {
     }
 
     try {
-        let user = await User.findOne({loginname, pass}).exec();
+        let user = await User.findOne({loginname}).exec();
+        console.log(user);
         if (!user) {
             return ctx.body = {
                 code: 1,
-                msg: '用户名或密码错误'
+                msg: '当前用户不存在'
             };
+        }
+
+        // 验证密码
+        let isOk = pwd.validate(pass, user.pass);
+
+        if (!isOk) {
+            throw new Error('用户名或密码错误');
         }
 
         ctx.session.user = user;
