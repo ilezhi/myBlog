@@ -8,6 +8,7 @@ import { Button, IconButton } from 'react-toolbox/lib/button';
 import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list';
 import Tooltip from 'react-toolbox/lib/tooltip';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
+import { Snackbar } from 'react-toolbox/lib/snackbar';
 
 import styles from '../../styles/site';
 import { fetchArticles, delArticleById } from '../../actions/article';
@@ -30,6 +31,7 @@ class ArticleList extends Component {
             showDialog: false,
             title: '',
             id: '',
+            active: false,
         };
     }
 
@@ -56,6 +58,7 @@ class ArticleList extends Component {
                     title='确认删除文章'>
                     <p>{this.state.title}</p>
                 </Dialog>
+                <Snackbar action='Dismiss' label={this.props.message.text} active={this.state.active} timeout={3000} onTimeout={this.SnackbarTimeout} />
             </div>
         );
     }
@@ -119,6 +122,10 @@ class ArticleList extends Component {
 
     async ensureDelArticle() {
         let res = await this.props.delArticleById(this.state.id);
+        this.setState({
+            ...this.state,
+            active: true
+        });
         this.cancelDialog();
     }
 
@@ -128,7 +135,14 @@ class ArticleList extends Component {
     cancelDialog() {
         this.setState({
             ...this.state,
-            showDialog: false
+            showDialog: false,
+        });
+    }
+
+    SnackbarTimeout = () => {
+        this.setState({
+            ...this.state,
+            active: false,
         });
     }
 }

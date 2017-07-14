@@ -28,14 +28,14 @@ const message = (state = {}, action) => {
         case SIGNIN_SUCCESS:
             return {
                 type: 'success',
-                message: action.data.msg
+                text: action.data.msg
             };
         
         case SIGNIN_FAILURE:
         case SIGNOUT_FAILURE:
             return {
                 type: 'error',
-                message: action.message
+                text: action.message
             };
         
         default:
