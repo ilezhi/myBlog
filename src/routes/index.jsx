@@ -33,12 +33,12 @@ const Profile = (location, cb) => {
 };
 
 const Auth = function(params, replace) {
-    let userInfo = sessionStorage.getItem('userInfo');
-    let pathname = window.location.pathname;
-    const loginPath = '/admin/login';
-    if (!userInfo && loginPath !== pathname) {
-        replace(loginPath);
-    }
+    // let userInfo = sessionStorage.getItem('userInfo');
+    // let pathname = window.location.pathname;
+    // const loginPath = '/admin/login';
+    // if (!userInfo && loginPath !== pathname) {
+    //     replace(loginPath);
+    // }
 };
 
 const routes = (
