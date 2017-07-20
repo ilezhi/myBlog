@@ -1,4 +1,3 @@
-console.log('进入development');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -32,7 +31,7 @@ var devConfig = merge(baseWebpackConfig, {
                 target: 'http://localhost:3000',
                 changeOrigin: true,
                 pathRewrite: {
-                    '^/api': ''
+                    '^/api': '/api/'
                 }
             }
         }

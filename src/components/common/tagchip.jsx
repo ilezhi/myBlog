@@ -3,7 +3,6 @@ import Chip from 'react-toolbox/lib/chip';
 
 const TagChip = props => {
     let { tagsId, tags } = props;
-    console.log('*****************',props);
     if (tagsId.length === 0 || tags.length === 0) {
         return false;
     }

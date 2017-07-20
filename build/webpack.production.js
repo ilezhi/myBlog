@@ -1,4 +1,3 @@
-console.log('进入production');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -9,9 +8,9 @@ const baseWebpackConfig =  require('./_base');
 
 var prodConfig = merge(baseWebpackConfig, {
     module: {
-        rule: [
+        rules: [
             {
-                test: /\.(css|scss)$/,
+                test: /\.css$/,
                 use: ExtractTextPlugin.extract([{
                         loader: 'css-loader',
                         options: {
@@ -25,6 +24,11 @@ var prodConfig = merge(baseWebpackConfig, {
         ]
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+        }),
         new HtmlWebpackPlugin({
             filename: '../views/index.html',
             template: 'index.html',
@@ -36,14 +40,14 @@ var prodConfig = merge(baseWebpackConfig, {
             },
             chunksSortMode: 'dependency'
         }),
-        new wepback.optimize.CommonsChunkPlugin({
+        new webpack.optimize.CommonsChunkPlugin({
             name: 'vendor',
             minChunks: function(module) {
                 return module.context && module.context.indexOf('node_modules') !== -1;
             }
         }),
-         new ExtractTextPlugin('styles/site.css'),
-         new webpack.optimize.UglifyJsPlugin({
+        new ExtractTextPlugin('styles/[name].css'),
+        new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             },

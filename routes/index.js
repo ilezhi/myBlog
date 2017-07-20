@@ -4,17 +4,22 @@ var article = require('../controllers/article');
 var tag = require('../controllers/tag');
 var user = require('../controllers/user');
 var auth = require('../controllers/auth');
-
-router.post('/signin', user.signin);
-router.post('/signout', user.signout);
-
-router.get('/article/list', article.list);
-router.post('/article/save',auth.userRequired, article.save);
-router.post('/article/edit', auth.userRequired, article.edit);
-router.post('/article/del', auth.userRequired, article.del);
+var index = require('../controllers');
 
 
-router.get('/tag/list', tag.list);
-router.post('/tag/create', auth.userRequired, tag.create);
+
+router.post('/api/signin', user.signin);
+router.post('/api/signout', user.signout);
+
+router.get('/api/article/list', article.list);
+router.post('/api/article/save',auth.userRequired, article.save);
+router.post('/api/article/edit', auth.userRequired, article.edit);
+router.post('/api/article/del', auth.userRequired, article.del);
+
+
+router.get('/api/tag/list', tag.list);
+router.post('/api/tag/create', auth.userRequired, tag.create);
+
+router.get('*', index.home);
 
 module.exports = router;

@@ -21,6 +21,7 @@ app.use(convert(bodyparser));
 app.use(convert(json()));
 app.use(convert(logger()));
 app.use(require('koa-static')(__dirname + '/assets'));
+app.use(require('koa-static')(__dirname + '/public'));
 app.use(session({
   key: 'weelsblog'
 }));
