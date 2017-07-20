@@ -32,21 +32,12 @@ const Profile = (location, cb) => {
     }, 'profile');
 };
 
-const Auth = function(params, replace) {
-    // let userInfo = sessionStorage.getItem('userInfo');
-    // let pathname = window.location.pathname;
-    // const loginPath = '/admin/login';
-    // if (!userInfo && loginPath !== pathname) {
-    //     replace(loginPath);
-    // }
-};
-
 const routes = (
     <Route path="/" component={App}>
         <IndexRoute component={Home} />
         <Route path="article" component={Home} />
         <Route path="article/:id" getComponent={detailArticle} />
-        <Route path="admin" component={User} onEnter={Auth}>
+        <Route path="admin" component={User}>
             <IndexRoute component={List} />
             <Route path="login" getComponent={Login} />
             <Route path="article" component={List} />

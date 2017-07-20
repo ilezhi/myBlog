@@ -10,6 +10,7 @@ var index = require('../controllers');
 
 router.post('/api/signin', user.signin);
 router.post('/api/signout', user.signout);
+router.post('/api/user/reset/passwd', auth.userRequired, user.resetPasswd);
 
 router.get('/api/article/list', article.list);
 router.post('/api/article/save',auth.userRequired, article.save);

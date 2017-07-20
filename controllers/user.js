@@ -24,7 +24,7 @@ exports.signin = async (ctx, next) => {
         }
 
         // 验证密码
-        let isOk = pwd.validate(pass, user.pass);
+        let isOk = await pwd.validate(pass, user.pass);
 
         if (!isOk) {
             throw new Error('用户名或密码错误');
@@ -53,4 +53,45 @@ exports.signout = async(ctx, next) => {
         code: 0,
         msg: '退出成功'
     };
+};
+
+exports.resetPasswd = async(ctx, next) => {
+    let { passwd, cPasswd } = ctx.request.body;
+
+    if (passwd === '' || cPasswd === '') {
+        return ctx.body = {
+            code: 1,
+            msg: '密码不能为空'
+        };
+    }
+
+    // 获取用户
+    let id = ctx.session.user._id;
+
+    let user = null;
+    try {
+        user = await User.findOne({_id: id}).exec();
+
+        let isOk = await pwd.validate(passwd, user.pass);
+
+        if (!isOk) {
+            return ctx.body = {
+                code: 1,
+                msg: '密码错误'
+            };
+        }
+
+        let newPass = await pwd.encrypt(cPasswd);
+        await User.findOneAndUpdate({_id: id}, {pass: newPass}).exec();
+
+        return ctx.body = {
+            code: 0,
+            msg: '修改成功'
+        };
+    } catch (err) {
+        return ctx.body = {
+            code: 1,
+            msg: err.message
+        };
+    }
 };

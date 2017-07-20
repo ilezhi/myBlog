@@ -8,6 +8,10 @@ import {
 
     SIGNOUT_SUCCESS,
     SIGNOUT_FAILURE,
+
+    RESET_PASSWD_REQUEST,
+    RESET_PASSWD_SUCCESS,
+    RESET_PASSWD_FAILURE,
 } from '../constants/userType';
 
 
@@ -15,6 +19,7 @@ import {
 const isFetching = (state = false, action) => {
     switch(action.type) {
         case SIGNIN_REQUEST:
+        case RESET_PASSWD_REQUEST:
             return true;
         
         default:
@@ -26,6 +31,7 @@ const isFetching = (state = false, action) => {
 const message = (state = {}, action) => {
     switch(action.type) {
         case SIGNIN_SUCCESS:
+        case RESET_PASSWD_SUCCESS:
             return {
                 type: 'success',
                 text: action.data.msg
@@ -33,6 +39,7 @@ const message = (state = {}, action) => {
         
         case SIGNIN_FAILURE:
         case SIGNOUT_FAILURE:
+        case RESET_PASSWD_FAILURE:
             return {
                 type: 'error',
                 text: action.message

@@ -10,7 +10,11 @@ import {
 
     EDIT_USER_REQUEST,
     EDIT_USER_SUCCESS,
-    EDIT_USER_FAILURE
+    EDIT_USER_FAILURE,
+
+    RESET_PASSWD_REQUEST,
+    RESET_PASSWD_SUCCESS,
+    RESET_PASSWD_FAILURE,
 } from '../constants/userType';
 
 import fetch from '../assets/js/fetch';
@@ -71,5 +75,17 @@ export const editUser = (params) => {
             data: {...params}
         }
     };
+};
+
+export const resetPasswd = params => {
+    return {
+        types: [RESET_PASSWD_REQUEST, RESET_PASSWD_SUCCESS, RESET_PASSWD_FAILURE],
+        shouldCallApi: true,
+        endpoint: '/api/user/reset/passwd',
+        params: {
+            type: 'POST',
+            data: {...params} 
+        }
+    }
 };
 

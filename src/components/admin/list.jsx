@@ -9,9 +9,11 @@ import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-
 import Tooltip from 'react-toolbox/lib/tooltip';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
 import { Snackbar } from 'react-toolbox/lib/snackbar';
+import Input from 'react-toolbox/lib/input';
 
 import styles from '../../styles/site';
 import { fetchArticles, delArticleById } from '../../actions/article';
+import { resetPasswd } from '../../actions/user';
 
 
 const TooltipButton = Tooltip(IconButton);
@@ -32,6 +34,9 @@ class ArticleList extends Component {
             title: '',
             id: '',
             active: false,
+            showPass: false,
+            passwd: '',
+            cPasswd: ''
         };
     }
 
@@ -45,6 +50,7 @@ class ArticleList extends Component {
             <div>
                 <aside className={styles.createArticle}>
                     <Link to='/admin/article/create'><Button raised><FontIcon value="edit" /> 新增</Button></Link>
+                    <div className='pull-right'><Button onClick={this.openPassDialog}>修改密码</Button></div>
                 </aside>
                 <div>
                     {this.renderArticles(this.props.list)}
@@ -59,6 +65,14 @@ class ArticleList extends Component {
                     <p>{this.state.title}</p>
                 </Dialog>
                 <Snackbar action='Dismiss' label={this.props.message.text} active={this.state.active} timeout={3000} onTimeout={this.SnackbarTimeout} />
+                <Dialog
+                    active={this.state.showPass}
+                    actions={this.passActions}
+                    onOverlayClick={this.cancelPassDialog}
+                    title='修改密码'>
+                    <div><Input type='password' label='passwd' value={this.state.passwd} onChange={this.changePasswd} /></div>
+                    <div><Input type='password' label='confirm passwd' value={this.state.cPasswd} onChange={this.changeCPasswd} /></div>
+                </Dialog>
             </div>
         );
     }
@@ -66,7 +80,12 @@ class ArticleList extends Component {
     actions = [
         { label: '取消', onClick: this.cancelDialog.bind(this) },
         { label: '删除', onClick: this.ensureDelArticle.bind(this) }
-    ]
+    ];
+
+    passActions = [
+        { label: '取消', onClick: this.cancelPassDialog.bind(this) },
+        { label: '确定', onClick: this.resetPasswd.bind(this) }
+    ];
 
     
     /**
@@ -145,6 +164,63 @@ class ArticleList extends Component {
             active: false,
         });
     }
+
+    /**
+     * 关闭修改密码框
+     */
+    cancelPassDialog() {
+        this.setState({
+            ...this.state,
+            showPass: false,
+            passwd: '',
+            cPasswd: ''
+        });
+    }
+
+    /**
+     * 打开修改密码框
+     */
+     openPassDialog = () => {
+         this.setState({
+             ...this.state,
+             showPass: true
+         });
+     }
+
+     /**
+      * 确定修改密码
+      */
+     async resetPasswd() {
+        //
+        let { passwd, cPasswd } = this.state;
+        if (passwd.trim() === '' || cPasswd.trim() === '') {
+            alert('密码不能为空');
+            return;
+        }
+
+        let res = await this.props.resetPasswd({passwd, cPasswd});
+
+        if (res.type.includes('FAILURE')) {
+            alert(res.message);
+            return;
+        }
+
+        this.cancelPassDialog();
+     }
+
+     changePasswd = passwd => {
+        this.setState({
+            ...this.state,
+            passwd
+        });
+     }
+
+     changeCPasswd = cPasswd => {
+        this.setState({
+            ...this.state,
+            cPasswd
+        });
+     }
 }
 
 /**
@@ -156,4 +232,4 @@ const mapStateToProps = state => {
      };
 }
 
-export default connect(mapStateToProps, { fetchArticles, delArticleById })(ArticleList);
+export default connect(mapStateToProps, { fetchArticles, delArticleById, resetPasswd })(ArticleList);
