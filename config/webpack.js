@@ -9,7 +9,7 @@ var config = {};
 // -----------------------
 // User Configuration
 // ------------------------
-config.cache = false;
+config.cache = process.env.NODE_ENV === 'production' ? true : false;
 config.dir_src = 'src';
 config.dir_assets = 'assets';
 

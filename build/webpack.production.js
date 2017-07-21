@@ -15,6 +15,7 @@ var prodConfig = merge(baseWebpackConfig, {
                         loader: 'css-loader',
                         options: {
                             modules: true,
+                            minimize: true,
                             sourceMap: true,
                             importLoaders: 1,
                             localIdentName: '[name]--[local]--[hash:base64:8]'
@@ -41,7 +42,7 @@ var prodConfig = merge(baseWebpackConfig, {
             chunksSortMode: 'dependency'
         }),
         new webpack.optimize.CommonsChunkPlugin({
-            name: 'vendor',
+            names: ['vendor', 'manifest'],
             minChunks: function(module) {
                 return module.context && module.context.indexOf('node_modules') !== -1;
             }
