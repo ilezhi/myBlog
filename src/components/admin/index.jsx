@@ -5,8 +5,8 @@ import { browserHistory } from 'react-router';
 class User extends Component {
     componentDidMount() {
         let path = window.location.pathname;
-        let userInfo = JSON.parse(sessionStorage.getItem('userInfo'));
-        if (Object.keys(userInfo).length === 0
+        let userInfo = sessionStorage.getItem('userInfo');
+        if (userInfo === null
             && !path.includes('login')) {
                 browserHistory.push('/admin/login');
             }
