@@ -7,6 +7,8 @@ const onerror = require('koa-onerror');
 const Bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 const session = require('koa-session2');
+const server = require('koa-static');
+const path = require('path');
 
 require('./models');
 
@@ -20,8 +22,8 @@ const bodyparser = Bodyparser();
 app.use(convert(bodyparser));
 app.use(convert(json()));
 app.use(convert(logger()));
-app.use(require('koa-static')(__dirname + '/assets'));
-app.use(require('koa-static')(__dirname + '/public'));
+app.use(server(path.join(__dirname + '/assets'), {maxage: 14400000}));
+app.use(server(path.join(__dirname + '/public'), {maxage: 14400000}));
 
 app.use(session({
   key: 'weelsblog'
