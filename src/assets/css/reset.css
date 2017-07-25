@@ -469,6 +469,7 @@ h4 {
 @media screen and (max-width: 760px) {
     h1, h2, h3 {
       font-size: 18px;
+      font-weight: bold;
     }
 }
 

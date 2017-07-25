@@ -30,7 +30,8 @@ var baseConfig = {
     },
     externals: {
         'editor': 'Editor',
-        'marked': 'marked'
+        'marked': 'marked',
+        'moment': 'moment',
     },
     module: {
         rules: [
