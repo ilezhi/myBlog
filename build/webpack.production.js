@@ -2,6 +2,8 @@ const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpckPlugin = require('clean-webpack-plugin');
+const config = require('../config/webpack');
 
 const baseWebpackConfig =  require('./_base');
 
@@ -47,13 +49,18 @@ var prodConfig = merge(baseWebpackConfig, {
                 return module.context && module.context.indexOf('node_modules') !== -1;
             }
         }),
-        new ExtractTextPlugin('styles/[name].css'),
+        new ExtractTextPlugin('styles/[name].[chunkhash:5].css'),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             },
             sourceMap: true
         }),
+        new CleanWebpckPlugin([config.dir_assets], {
+            root: config.path_project,
+            verbose: true,
+            dry: false
+        })
     ]
 });
 
