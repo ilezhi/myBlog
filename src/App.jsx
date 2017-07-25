@@ -8,6 +8,7 @@ import { fetchTags } from './actions/tag';
 import { addUserInfo, signout } from './actions/user';
 import FontIcon from 'react-toolbox/lib/font_icon';
 import Tooltip from 'react-toolbox/lib/tooltip';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 
 const TooltipIcon = Tooltip(FontIcon);
@@ -56,7 +57,16 @@ class App extends Component {
                 </header>
                 <div className={styles.main}>
                     <div className={styles.center}>
-                        {this.props.children}
+                        <ReactCSSTransitionGroup
+                            transitionName='transitionWrapper'
+                            component='div'
+                            className={styles.transitionWrapper}
+                            transitionEnterTimeout={1000}
+                            transitionLeaveTimeout={1000}>
+                            <div key={this.props.location.pathname} style={{width: '100%'}}>
+                                {this.props.children}
+                            </div>
+                        </ReactCSSTransitionGroup>
                     </div>
                 </div>
                 <footer className={styles.footer}>

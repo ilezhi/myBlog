@@ -65,7 +65,7 @@ div[data-react-toolbox="chip"] span + span {
 
 .articleList {
     flex: 1;
-    padding: 0.16rem 0;
+    padding: 0.16rem 0.06rem;
 }
 
 .articleList > div {
@@ -275,3 +275,34 @@ div[data-react-toolbox="chip"] span + span {
     }
 }
 
+
+.transitionWrapper {
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+:global(.transitionWrapper-enter) {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.5s ease-out 0.4s;
+}
+
+:global(.transitionWrapper-enter.transitionWrapper-enter-active) {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+
+:global(.transitionWrapper-leave) {
+    opacity: 1;
+    transform: translateX(0);
+    position: absolute;
+    top: 0;
+}
+
+:global(.transitionWrapper-leave.transitionWrapper-leave-active) {
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.3s ease-out;
+}
