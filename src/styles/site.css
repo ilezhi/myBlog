@@ -11,6 +11,10 @@ body {
     cursor: pointer;
 }
 
+:global(#article) {
+    padding: 15px 0;
+}
+
 div[data-react-toolbox="chip"] {
     line-height: 22px;
 }
@@ -181,7 +185,7 @@ div[data-react-toolbox="chip"] span + span {
 }
 
 .article p {
-    font-size: 0.16rem;
+    font-size: 16px;
     margin: 0 0 0.2rem;
     line-height: 24px;
 }
@@ -190,7 +194,7 @@ div[data-react-toolbox="chip"] span + span {
 .article h2,
 .article h3,
 .article h4 {
-    margin: 0.2rem 0;
+    margin: 20px 0;
 }
 
 .article a {
@@ -208,6 +212,10 @@ div[data-react-toolbox="chip"] span + span {
 
 .article blockquote ul {
     list-style: initial;
+}
+
+.article blockquote p {
+    margin: 0;
 }
 
 .article p code {
