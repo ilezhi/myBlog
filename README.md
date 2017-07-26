@@ -24,8 +24,6 @@ npm install
 
 ### 生产环境
 
-需要将根目录下index.html中引入的css,js文件路径中的`/publc`删除
-
 windows
 
 ```bash

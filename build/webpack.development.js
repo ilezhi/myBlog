@@ -26,6 +26,7 @@ var devConfig = merge(baseWebpackConfig, {
         hot: true,
         inline: true,
         port: '8000',
+        contentBase: './public',
         proxy: {
             '/api': {
                 target: 'http://localhost:3000',
