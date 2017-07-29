@@ -1,6 +1,0 @@
-[2017-05-20 00:39:55.516] [ERROR] cheese - connect to mongodb://127.0.0.1/blog error failed to connect to server [127.0.0.1:27017] on first connect [MongoError: connect ECONNREFUSED 127.0.0.1:27017]
-[2017-05-20 01:07:33.624] [ERROR] cheese - connect to mongodb://127.0.0.1/blog error failed to connect to server [127.0.0.1:27017] on first connect [MongoError: connect ECONNREFUSED 127.0.0.1:27017]
-[2017-05-30 10:37:41.516] [ERROR] cheese - connect to mongodb://127.0.0.1/blog error failed to connect to server [127.0.0.1:27017] on first connect [MongoError: connect ECONNREFUSED 127.0.0.1:27017]
-[2017-05-30 10:38:07.326] [ERROR] cheese - connect to mongodb://127.0.0.1/blog error failed to connect to server [127.0.0.1:27017] on first connect [MongoError: connect ECONNREFUSED 127.0.0.1:27017]
-[2017-07-14 10:48:04.071] [ERROR] cheese - encrypt pass error bcrypt.genSaltAsync is not a function
-[2017-07-29 21:25:37.801] [ERROR] cheese - connect to mongodb://127.0.0.1/blog error failed to connect to server [127.0.0.1:27017] on first connect [MongoError: connect ECONNREFUSED 127.0.0.1:27017]
