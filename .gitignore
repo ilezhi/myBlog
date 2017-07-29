@@ -5,7 +5,6 @@
 # Xcode
 #
 # build/
-# assets/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -31,10 +30,14 @@ project.xcworkspace
 local.properties
 *.iml
 
+# js
+assets/
+
 # node.js
 #
 node_modules/
 npm-debug.log
+views/
 
 # BUCK
 buck-out/

@@ -5,6 +5,7 @@ mongoose.Promise = global.Promise;
 
 // 获取文章列表
 exports.list = async function(ctx, next) {
+    console.log('session', ctx.session);
     let { pageNum = 1, pageSize = 20 } = ctx.query;
     let start = pageSize * (pageNum - 1);
     let queryCount = Article.count();

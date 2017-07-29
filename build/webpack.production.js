@@ -1,21 +1,23 @@
-console.log('进入production');
 const webpack = require('webpack');
 const merge = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CleanWebpckPlugin = require('clean-webpack-plugin');
+const config = require('../config/webpack');
 
 const baseWebpackConfig =  require('./_base');
 
 
 var prodConfig = merge(baseWebpackConfig, {
     module: {
-        rule: [
+        rules: [
             {
-                test: /\.(css|scss)$/,
+                test: /\.css$/,
                 use: ExtractTextPlugin.extract([{
                         loader: 'css-loader',
                         options: {
                             modules: true,
+                            minimize: true,
                             sourceMap: true,
                             importLoaders: 1,
                             localIdentName: '[name]--[local]--[hash:base64:8]'
@@ -25,6 +27,11 @@ var prodConfig = merge(baseWebpackConfig, {
         ]
     },
     plugins: [
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: JSON.stringify('production')
+            }
+        }),
         new HtmlWebpackPlugin({
             filename: '../views/index.html',
             template: 'index.html',
@@ -36,19 +43,24 @@ var prodConfig = merge(baseWebpackConfig, {
             },
             chunksSortMode: 'dependency'
         }),
-        new wepback.optimize.CommonsChunkPlugin({
-            name: 'vendor',
+        new webpack.optimize.CommonsChunkPlugin({
+            names: ['vendor', 'manifest'],
             minChunks: function(module) {
                 return module.context && module.context.indexOf('node_modules') !== -1;
             }
         }),
-         new ExtractTextPlugin('styles/site.css'),
-         new webpack.optimize.UglifyJsPlugin({
+        new ExtractTextPlugin('styles/[name].[chunkhash:5].css'),
+        new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
             },
             sourceMap: true
         }),
+        new CleanWebpckPlugin([config.dir_assets], {
+            root: config.path_project,
+            verbose: true,
+            dry: false
+        })
     ]
 });
 

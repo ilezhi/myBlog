@@ -1,15 +1,15 @@
 const path = require('path');
 // var argv = require('yargs').argv;
-console.log('读取webpack配置文件');
-process.env.NODE_ENV = (process.env.NODE_ENV || 'development').trim();
-console.log(process.env.NODE_ENV);
+// console.log('读取webpack配置文件');
+// process.env.NODE_ENV = (process.env.NODE_ENV || 'development').trim();
+// console.log(process.env.NODE_ENV);
 
 var config = {};
 
 // -----------------------
 // User Configuration
 // ------------------------
-config.cache = false;
+config.cache = process.env.NODE_ENV === 'production' ? true : false;
 config.dir_src = 'src';
 config.dir_assets = 'assets';
 
@@ -26,7 +26,7 @@ config.vendor_dependencies = [
 // -----------------------
 // Environment
 // -----------------------
-config.env = process.env.NODE_ENV;
+config.env = process.env.NODE_ENV || 'development';
 config.globals = {
     'process.env' : {
         'NODE_ENV' : JSON.stringify(config.env)
@@ -74,5 +74,4 @@ config.utils_aliases = [
     'styles',
 ].reduce((acc, x) => ((acc[x] = paths.src(x)) && acc), {});
 
-console.log('config');
 module.exports = config;

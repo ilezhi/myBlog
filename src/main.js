@@ -19,14 +19,12 @@ import App from './app';
 const store = configureStore();
 const history = syncHistoryWithStore(browserHistory, store);
 
-console.log('******routes', routes);
-
 const render = () => {
     ReactDOM.render(
         <Provider store={store}>
             <div>
                 <Router history={history} routes={routes} />
-                <DevTools />
+                {process.env.NODE_ENV !== 'production' ? <DevTools /> : false}
             </div>
         </Provider>,
         document.getElementById('app')

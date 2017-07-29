@@ -8,9 +8,12 @@ import { Button, IconButton } from 'react-toolbox/lib/button';
 import { List, ListItem, ListSubHeader, ListDivider, ListCheckbox } from 'react-toolbox/lib/list';
 import Tooltip from 'react-toolbox/lib/tooltip';
 import ProgressBar from 'react-toolbox/lib/progress_bar';
+import { Snackbar } from 'react-toolbox/lib/snackbar';
+import Input from 'react-toolbox/lib/input';
 
 import styles from '../../styles/site';
 import { fetchArticles, delArticleById } from '../../actions/article';
+import { resetPasswd } from '../../actions/user';
 
 
 const TooltipButton = Tooltip(IconButton);
@@ -30,22 +33,12 @@ class ArticleList extends Component {
             showDialog: false,
             title: '',
             id: '',
+            active: false,
         };
     }
 
     async componentDidMount() {
-        // let { list, fetchArticles } = this.props;
-        // // 1 进入此页面,2 在此页面刷新
-        // if (list.length === 0) {
-        //     let res = await fetchArticles({pageNum: 1, pageSize: 20});
-        //     // 成功请求后标识出, 用于区别没有文章还是首次加载
-        //     if (res.type.includes('SUCCESS')) {
-        //         this.setState({
-        //             ...this.state,
-        //             fetched: true
-        //         });
-        //     }
-        // }
+        
     }
 
     render() {
@@ -67,6 +60,7 @@ class ArticleList extends Component {
                     title='确认删除文章'>
                     <p>{this.state.title}</p>
                 </Dialog>
+                <Snackbar action='Dismiss' label={this.props.message.text} active={this.state.active} timeout={3000} onTimeout={this.SnackbarTimeout} />
             </div>
         );
     }
@@ -74,9 +68,8 @@ class ArticleList extends Component {
     actions = [
         { label: '取消', onClick: this.cancelDialog.bind(this) },
         { label: '删除', onClick: this.ensureDelArticle.bind(this) }
-    ]
+    ];
 
-    
     /**
      * 显示文章列表
      */
@@ -130,6 +123,10 @@ class ArticleList extends Component {
 
     async ensureDelArticle() {
         let res = await this.props.delArticleById(this.state.id);
+        this.setState({
+            ...this.state,
+            active: true
+        });
         this.cancelDialog();
     }
 
@@ -139,7 +136,14 @@ class ArticleList extends Component {
     cancelDialog() {
         this.setState({
             ...this.state,
-            showDialog: false
+            showDialog: false,
+        });
+    }
+
+    SnackbarTimeout = () => {
+        this.setState({
+            ...this.state,
+            active: false,
         });
     }
 }
@@ -153,4 +157,4 @@ const mapStateToProps = state => {
      };
 }
 
-export default connect(mapStateToProps, { fetchArticles, delArticleById })(ArticleList);
+export default connect(mapStateToProps, { fetchArticles, delArticleById, resetPasswd })(ArticleList);

@@ -1,5 +1,5 @@
 const API_ROOT = 'http://localhost:8000';
-
+import fetch from '../assets/js/fetch';
 
 export default store => next => action => {
     let { types, shouldCallApi, endpoint, params } = action;
@@ -18,27 +18,9 @@ export default store => next => action => {
     const [requestType, successType, failureType] = types;
 
     const { type, data } = params;
-    let requestConfig = {
-        method: type,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }
-
-    if (type.toUpperCase() === 'GET' && data) {
-        let queryStr = '?' + Object.keys(data).map(key => {
-            return key + '=' + data[key];
-        }).join('&');
-
-        endpoint += queryStr;
-    } else {
-        Object.defineProperty(requestConfig, 'body', {
-            value: JSON.stringify(data)
-        });
-    }
 
     next({type: requestType});
-    return fetch(endpoint, requestConfig)
+    return fetch(endpoint, type, data)
             .then(res => {
                 if (res.status !== 200) {
                     throw new Error(res.statusText);

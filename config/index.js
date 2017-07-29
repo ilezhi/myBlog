@@ -9,6 +9,7 @@ const config = {
     // 后台默认用户名和密码
     loginname: 'weels',
     pass: 'weels',
+    saltTimes: 10,
 
     db: 'mongodb://127.0.0.1/blog',
 
