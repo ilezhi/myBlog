@@ -459,8 +459,12 @@ h1, h2, h3, h4, h5, h6 {
     margin: 0;
 }
 
-h1, h2, h3 {
-    font-size: 0.26rem;
+h1 {
+  font-size: 0.28rem;
+}
+
+h2, h3 {
+    font-size: 0.24rem;
 }
 h4 {
     font-size: 0.2rem;

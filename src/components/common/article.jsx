@@ -3,6 +3,9 @@ import Chip from 'react-toolbox/lib/chip';
 import styles from '../../styles/site';
 
 const Article = props => {
+    marked.setOptions({
+        highlight: code => hljs.highlightAuto(code).value
+    });
     return (
         props.tags === null 
         ? <p>bla</p>

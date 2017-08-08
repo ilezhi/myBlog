@@ -32,6 +32,7 @@ var baseConfig = {
         'editor': 'Editor',
         'marked': 'marked',
         'moment': 'moment',
+        'hljs'  : 'hljs'
     },
     module: {
         rules: [

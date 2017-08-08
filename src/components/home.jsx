@@ -43,10 +43,10 @@ class Home extends Component {
 
         return articles.map((article, i) => {
             let { title, content, tags: tagsId, _id, ...left} = article;
-            let html = content.length > 200 ? marked(content.substr(0, 200) + '...') : marked(content);
+            let html = content.length > 200 ? marked(content.substr(0, 100) + '...') : marked(content);
             return (
                 <Card key={i}>
-                    <CardTitle title={title} children={[<Info key={i + 'info'} {...left} />, <TagChip key={i + 'tag'} tagsId={tagsId} tags={tags} />]} />
+                    <CardTitle className='c-t' title={title} children={[<Info key={i + 'info'} {...left} />, <TagChip key={i + 'tag'} tagsId={tagsId} tags={tags} />]} />
                     <CardText className={styles.article} dangerouslySetInnerHTML={{__html: html}} />
                     <CardActions>
                         <Link to={`/article/${_id}`}>阅读更多 &raquo;</Link>
