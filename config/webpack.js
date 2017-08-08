@@ -5,16 +5,17 @@ const path = require('path');
 // console.log(process.env.NODE_ENV);
 
 var config = {};
+config.env = process.env.NODE_ENV || 'development';
 
 // -----------------------
 // User Configuration
 // ------------------------
-config.cache = process.env.NODE_ENV === 'production' ? true : false;
+config.cache = config.env === 'production';
 config.dir_src = 'src';
 config.dir_assets = 'assets';
 
 config.webpack_host = 'localhost';
-config.webpack_port = process.env.PORT || 3000;
+config.webpack_port = process.env.PORT || 8000;
 
 config.vendor_dependencies = [
     'react',
@@ -26,7 +27,6 @@ config.vendor_dependencies = [
 // -----------------------
 // Environment
 // -----------------------
-config.env = process.env.NODE_ENV || 'development';
 config.globals = {
     'process.env' : {
         'NODE_ENV' : JSON.stringify(config.env)

@@ -15,12 +15,12 @@ const chunkFilename = cache ? 'js/[name].[chunkhash:5].js' : 'js/[name].js';
 var baseConfig = {
     target: 'web',
     entry: {
-        app: [paths.project(config.dir_src + '/main.js')],
+        app: paths.src('main.js'),
         vendor: config.vendor_dependencies
     },
     output: {
         filename: filename,
-        path: paths.project(config.dir_assets),
+        path: paths.assets(),
         chunkFilename: chunkFilename,
         publicPath: '/'
     },
@@ -42,22 +42,27 @@ var baseConfig = {
             },
             {
                 test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
-                loader: 'url-loader',
+                loader: 'file-loader',
                 options: {
                     limit: 10000,
-                    name: paths.project(config.dir_assets + '/img/[name].[hash:7].[ext]')
+                    name: 'img/[name].[hash:7].[ext]'
                 }
             },
             {
-                test: /\.(woff2|eot|ttf|otf)(\?.*)?$/,
-                loader: 'url-loader',
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                loader: 'file-loader',
                 options: {
                     limit: 10000,
-                    name: paths.project(config.dir_assets + '/fonts/[name].[hash:7].[ext]')
+                    name: 'fonts/[name].[hash:7].[ext]'
                 }
             }
         ]
-    }
+    },
+    plugins: [
+        new webpack.optimize.CommonsChunkPlugin({
+            names: ['vendor', 'manifest']
+        })
+    ]
 };
 
 module.exports = baseConfig;

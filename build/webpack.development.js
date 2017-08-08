@@ -5,6 +5,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const baseWebpackConfig = require('./_base');
 
 var devConfig = merge(baseWebpackConfig, {
+    devtool: 'inline-source-map',     
     module: {
         rules: [
             {
@@ -29,7 +30,7 @@ var devConfig = merge(baseWebpackConfig, {
         contentBase: './public',
         proxy: {
             '/api': {
-                target: 'http://localhost:3000',
+                target: 'http://localhost:80',
                 changeOrigin: true,
                 pathRewrite: {
                     '^/api': '/api/'
@@ -47,6 +48,7 @@ var devConfig = merge(baseWebpackConfig, {
         new webpack.LoaderOptionsPlugin({
             debug: true
         }),
+        new webpack.HotModuleReplacementPlugin(),        // enable HMR
     ]
 });
 

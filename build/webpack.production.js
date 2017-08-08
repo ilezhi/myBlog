@@ -9,6 +9,7 @@ const baseWebpackConfig =  require('./_base');
 
 
 var prodConfig = merge(baseWebpackConfig, {
+    devtool: 'source-map',
     module: {
         rules: [
             {
@@ -43,13 +44,7 @@ var prodConfig = merge(baseWebpackConfig, {
             },
             chunksSortMode: 'dependency'
         }),
-        new webpack.optimize.CommonsChunkPlugin({
-            names: ['vendor', 'manifest'],
-            minChunks: function(module) {
-                return module.context && module.context.indexOf('node_modules') !== -1;
-            }
-        }),
-        new ExtractTextPlugin('styles/[name].[chunkhash:5].css'),
+        new ExtractTextPlugin('styles/[name].[contenthash:5].css'),
         new webpack.optimize.UglifyJsPlugin({
             compress: {
                 warnings: false
