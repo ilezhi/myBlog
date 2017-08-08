@@ -1,0 +1,85 @@
+/***common***/
+.hljs-string {
+  color: #ce9178;
+}
+
+
+/***javascript***/
+code.lang-javascript {
+  color: #9cdcfe;
+}
+
+.lang-javascript .hljs-comment {
+  color: #608b4e;
+}
+
+.lang-javascript .hljs-keyword {
+  color: #569cd6;
+}
+
+.lang-javascript .hljs-built_in {
+  color: #dcdcaa;
+}
+
+
+code.lang-html {
+  color: #808080;
+}
+
+.lang-html .hljs-name {
+  color: #569cd6;
+}
+
+.lang-html .hljs-attr {
+  color: #9cdcfe;
+}
+
+
+/***css***/
+code.lang-css {
+  color: #d4d4d4;
+}
+
+.lang-css .hljs-keyword {
+  color: #c586c0;
+}
+
+.lang-css .hljs-selector-tag {
+  color: #d7ba7d;
+}
+
+.lang-css .hljs-attribute {
+  color: #9cdcfe;
+}
+
+.lang-css .hljs-number {
+  color: #b5cea8;
+}
+
+.lang-css .hljs-built_in {
+  color: #dcdcaa;
+}
+
+
+/***bash director***/
+code {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !important;
+  font-size: 16px !important;
+}
+pre code,
+code.lang-bash,
+code.lang-diff {
+  color: #d4d4d4;
+}
+
+p code,
+li code {
+  background: #D6DBDF;
+  border-radius: 4px;
+  padding: 0 2px;
+}
+
+
+
+
+
