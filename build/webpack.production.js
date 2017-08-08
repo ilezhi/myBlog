@@ -51,7 +51,7 @@ var prodConfig = merge(baseWebpackConfig, {
             },
             sourceMap: true
         }),
-        new CleanWebpckPlugin([config.dir_assets], {
+        new CleanWebpckPlugin([config.utils_paths.assets()], {
             root: config.path_project,
             verbose: true,
             dry: false
