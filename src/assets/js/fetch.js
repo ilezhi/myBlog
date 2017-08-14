@@ -5,7 +5,7 @@ export default (url = '', type = 'GET', data = {}) => {
         const keys = Object.keys(data);
         if (keys.length !== 0) {
             let queryStr = keys.map(key => {
-                return keys + '=' + data[keys];
+                return key + '=' + data[key];
             }).join('&');
 
             url = url + '?' + queryStr;
