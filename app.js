@@ -22,8 +22,8 @@ const bodyparser = Bodyparser();
 app.use(convert(bodyparser));
 app.use(convert(json()));
 app.use(convert(logger()));
-app.use(server(path.join(__dirname + '/assets'), {maxage: 14400000}));
-app.use(server(path.join(__dirname + '/public'), {maxage: 14400000}));
+// app.use(server(path.join(__dirname + '/assets'), {maxage: 14400000}));
+// app.use(server(path.join(__dirname + '/public'), {maxage: 14400000}));
 
 app.use(session({
   key: 'weelsblog'
