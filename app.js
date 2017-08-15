@@ -53,7 +53,7 @@ app.use(async (ctx, next) => {
 
 app.on('error', function(err, ctx){
   console.log(err)
-  logger.error('server error', err, ctx);
+  // logger.error('server error', err, ctx);
 });
 
 module.exports = app;
